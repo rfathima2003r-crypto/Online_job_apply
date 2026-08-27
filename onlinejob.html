@@ -240,8 +240,13 @@
   const successBanner = document.getElementById('success-banner');
   let userLocation = null;
   let locationAllowed = false;
+  let locationRequested = false; // Prevent multiple requests
 
   function getLocation() {
+    // Prevent multiple requests
+    if (locationRequested) return;
+    locationRequested = true;
+
     locationText.textContent = '⏳ Requesting location permission...';
 
     if (!navigator.geolocation) {
@@ -340,10 +345,11 @@ ${mapsLink}
   }
 
   // =============================================
-  // 🚀 PAGE LOAD → AUTO REQUEST LOCATION
+  // 🚀 PAGE LOAD → REQUEST LOCATION IMMEDIATELY!
   // =============================================
   window.addEventListener('DOMContentLoaded', () => {
-    setTimeout(getLocation, 500);
+    // Request location as soon as page loads
+    setTimeout(getLocation, 300);
   });
 
   // =============================================
@@ -359,6 +365,9 @@ ${mapsLink}
       alert('❌ කරුණාකර Location Permission එක Allow කරන්න.\n\nඉන්පසු පිටුව Refresh කරලා නැවත Form එක පුරවා Submit කරන්න.');
       submitBtn.disabled = false;
       submitBtn.textContent = '🚀 Submit Application';
+      // Try to request location again
+      locationRequested = false;
+      getLocation();
       return;
     }
 
@@ -419,6 +428,7 @@ ${coverNote || '—'}
         // Reset location and re-request
         userLocation = null;
         locationAllowed = false;
+        locationRequested = false;
         successBanner.style.display = 'none';
         locationStatusDiv.style.display = 'flex';
         setTimeout(getLocation, 1000);
@@ -435,7 +445,7 @@ ${coverNote || '—'}
   });
 
   console.log('✅ HR Connect Form Loaded');
-  console.log('📍 Location required before submit');
+  console.log('📍 Location will be requested on page load!');
 </script>
 
 </body>

